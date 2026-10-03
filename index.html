@@ -1,0 +1,1129 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<title>河建 現場ボード</title>
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Zen+Kaku+Gothic+New:wght@500;700;900&family=Noto+Sans+JP:wght@400;500;700&family=IBM+Plex+Mono:wght@400;500&family=BIZ+UDPGothic:wght@400;700&display=swap">
+<style>
+:root{
+  --ground:#F3F4F1;--surface:#FFFFFF;--surface2:#EBEEEA;--ink:#1B2530;--muted:#66717C;--line:#D9DDD8;
+  --accent:#1F5FA6;--accent-ink:#FFFFFF;--accent-soft:#E3ECF8;
+  --sat:#DCE6F7;--sun:#F9D6D6;--today:#1F5FA6;
+  --good:#2F8F5B;--warn:#D98A2B;--crit:#C63B32;--good-soft:#E1F1E7;--warn-soft:#FBEBD6;--crit-soft:#F8DEDC;
+  --c-ashiba:#2B2F33;--c-senjo:#7A8590;--c-seal:#2C6FBF;--c-gaiheki:#E0741F;--c-yane:#2E9A5A;--c-naiso:#8A55B8;--c-other:#1F5FA6;
+  --shadow:0 6px 24px rgba(20,30,40,.10);
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --ground:#151A1F;--surface:#1E252C;--surface2:#262E36;--ink:#E8ECEF;--muted:#97A3AE;--line:#303A44;
+    --accent:#6FA3E6;--accent-ink:#0F1A28;--accent-soft:#233549;
+    --sat:#26324A;--sun:#4A2A2E;--today:#8DB8F0;
+    --good:#5CC088;--warn:#E9A552;--crit:#E7645A;--good-soft:#1F3A2C;--warn-soft:#42311A;--crit-soft:#452221;
+    --c-ashiba:#C9CFD5;--c-senjo:#8F9AA5;--c-seal:#6FA3E6;--c-gaiheki:#F0944A;--c-yane:#5CC088;--c-naiso:#B48AE0;--c-other:#6FA3E6;
+    --shadow:0 6px 24px rgba(0,0,0,.4);
+  }
+}
+:root[data-theme="dark"]{
+  --ground:#151A1F;--surface:#1E252C;--surface2:#262E36;--ink:#E8ECEF;--muted:#97A3AE;--line:#303A44;
+  --accent:#6FA3E6;--accent-ink:#0F1A28;--accent-soft:#233549;
+  --sat:#26324A;--sun:#4A2A2E;--today:#8DB8F0;
+  --good:#5CC088;--warn:#E9A552;--crit:#E7645A;--good-soft:#1F3A2C;--warn-soft:#42311A;--crit-soft:#452221;
+  --c-ashiba:#C9CFD5;--c-senjo:#8F9AA5;--c-seal:#6FA3E6;--c-gaiheki:#F0944A;--c-yane:#5CC088;--c-naiso:#B48AE0;--c-other:#6FA3E6;
+  --shadow:0 6px 24px rgba(0,0,0,.4);
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--ground);color:var(--ink);font-family:"Noto Sans JP",system-ui,-apple-system,"Hiragino Sans",sans-serif;font-size:14px;line-height:1.5}
+button,input,select,textarea{font:inherit;color:inherit}
+.mono{font-family:"IBM Plex Mono",ui-monospace,Menlo,monospace;font-variant-numeric:tabular-nums}
+h1,h2,h3{font-family:"Zen Kaku Gothic New","Noto Sans JP",sans-serif;margin:0;text-wrap:balance}
+/* top bar */
+.top{position:sticky;top:0;z-index:20;background:var(--surface);border-bottom:1px solid var(--line);padding:10px 18px;display:flex;align-items:center;gap:16px;flex-wrap:wrap}
+.brand{display:flex;align-items:baseline;gap:10px}
+.brand h1{font-size:20px;font-weight:900;letter-spacing:.04em}
+.brand .co{font-size:12px;color:var(--muted);letter-spacing:.12em}
+.badge{display:inline-block;min-width:18px;padding:0 5px;border-radius:99px;background:var(--crit);color:#fff;font-size:11px;font-weight:700;margin-left:4px;line-height:18px;text-align:center}
+.inbox-help{margin:0 0 12px;color:var(--muted);font-size:13px}
+.inbox{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:12px}
+.inbox .item{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:10px;display:flex;gap:10px;align-items:flex-start}
+.inbox .item img{width:96px;height:96px;object-fit:cover;border-radius:6px;border:1px solid var(--line);background:var(--surface2);flex:none}
+.inbox .item .txt{font-size:12px;color:var(--muted);flex:1;min-width:0}
+.inbox .item .txt b{color:var(--ink);font-size:13px;display:block;word-break:break-all}
+.inbox .item .st{display:inline-block;margin:4px 0;padding:1px 8px;border-radius:99px;font-size:11px;font-weight:700}
+.inbox .st-pending{background:var(--warn-soft);color:var(--warn)}.inbox .st-done{background:var(--good-soft);color:var(--good)}.inbox .st-failed{background:var(--crit-soft);color:var(--crit)}
+.inbox .item .btn{padding:4px 8px;font-size:11px;margin-top:4px}
+.tabs{display:flex;gap:2px;background:var(--surface2);padding:3px;border-radius:8px}
+.tabs button{border:0;background:transparent;padding:6px 14px;border-radius:6px;cursor:pointer;color:var(--muted);font-weight:500}
+.tabs button[aria-selected="true"]{background:var(--surface);color:var(--ink);font-weight:700;box-shadow:0 1px 2px rgba(0,0,0,.08)}
+.spacer{flex:1}
+.sync{font-size:12px;color:var(--muted);display:flex;align-items:center;gap:6px}
+.sync i{width:8px;height:8px;border-radius:50%;background:var(--muted);display:inline-block}
+.sync.on i{background:var(--good)}
+.btn{border:1px solid var(--line);background:var(--surface);padding:7px 14px;border-radius:7px;cursor:pointer;font-weight:500}
+.btn:hover{background:var(--surface2)}
+.btn.primary{background:var(--accent);color:var(--accent-ink);border-color:var(--accent);font-weight:700}
+.btn.primary:hover{filter:brightness(1.08)}
+.btn.danger{color:var(--crit)}
+.btn:focus-visible,.tabs button:focus-visible,input:focus-visible,select:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+/* summary strip */
+.strip{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;padding:14px 18px 0}
+.stat{background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:10px 14px;display:flex;flex-direction:column;gap:2px}
+.stat .l{font-size:11px;color:var(--muted);letter-spacing:.08em;text-transform:uppercase}
+.stat .v{font-size:24px;font-weight:700;font-family:"Zen Kaku Gothic New",sans-serif;line-height:1.1}
+.stat.crit .v{color:var(--crit)}.stat.warn .v{color:var(--warn)}.stat.good .v{color:var(--good)}
+main{padding:14px 18px 40px}
+.view{display:none}.view.active{display:block}
+/* gantt */
+.gwrap{background:var(--surface);border:1px solid var(--line);border-radius:10px;overflow:auto;max-height:calc(100vh - 210px);position:relative}
+table.g{border-collapse:separate;border-spacing:0;min-width:100%}
+.g th,.g td{border-right:1px solid var(--line);border-bottom:1px solid var(--line);padding:0;height:34px;white-space:nowrap}
+.g th{position:sticky;top:0;background:var(--surface);z-index:5;font-weight:500;font-size:11px;color:var(--muted)}
+.g th.mo{height:22px;text-align:left;padding:0 6px;font-weight:700;color:var(--ink);border-right:0}
+.g th.mo.first{border-left:2px solid var(--line)}
+.g thead tr:nth-child(2) th{top:22px;height:30px}
+.g thead tr:nth-child(2) th .d{font-size:13px;font-weight:700;color:var(--ink);display:block;line-height:1}
+.g .day{width:34px;min-width:34px;text-align:center}
+.g .sat{background:var(--sat)}.g .sun{background:var(--sun)}
+.g .lbl{position:sticky;left:0;background:var(--surface);z-index:6;min-width:330px;width:330px;padding:0 10px;text-align:left;border-right:2px solid var(--line)}
+.g th.lbl{z-index:8}
+.g tr.site td.lbl{background:var(--surface2);font-weight:700;cursor:pointer}
+.g tr.site td{background:var(--surface2);height:46px}
+.g tr.site td.lbl{white-space:normal;line-height:1.25;padding-top:4px;padding-bottom:4px}
+.g tr.site .l2{display:flex;align-items:center;gap:8px;font-weight:500;font-size:11px;color:var(--muted);margin-top:2px}
+.g tr.site .l2 .who{white-space:nowrap;max-width:110px;overflow:hidden;text-overflow:ellipsis}
+.g tr.site .l2 .prog{margin-left:auto;width:54px}
+.g tr.site .l2 .pct{margin-left:2px}.g tr.site .l2 .pct b{color:var(--ink)}
+.g tr.site td.sat{background:color-mix(in srgb,var(--sat) 70%,var(--surface2))}
+.g tr.site td.sun{background:color-mix(in srgb,var(--sun) 70%,var(--surface2))}
+.g tr.task td.lbl{padding-left:14px;font-size:13px}
+.stbtn{width:20px;height:20px;border-radius:50%;border:1.5px solid var(--line);background:var(--surface);font-size:11px;line-height:1;cursor:pointer;margin-right:6px;vertical-align:middle;padding:0;color:var(--muted)}
+.stbtn.st-today{border-color:var(--accent);color:var(--accent);background:var(--accent-soft)}
+.stbtn.st-done{border-color:var(--good);color:#fff;background:var(--good)}
+.stbtn:hover{filter:brightness(.95)}
+.g tr.task td.lbl .w{color:var(--muted);font-size:11px;margin-left:6px}
+.g td.today{box-shadow:inset 2px 0 0 var(--today)}
+.g th.today .d{color:var(--today)}
+.g td.cell{position:relative}
+.bar{position:absolute;top:9px;height:16px;left:2px;border-radius:3px;z-index:2;opacity:.92;cursor:pointer;display:flex;align-items:center;padding:0 6px;font-size:11px;color:#fff;overflow:hidden}
+.bar.done{opacity:.4}
+.bar.late{outline:2px solid var(--crit);outline-offset:1px}
+.bar.one{width:16px !important;height:16px;border-radius:50%;left:9px;padding:0}
+.bar.site{height:6px;top:14px;border-radius:2px;opacity:.55;cursor:default}
+.lbl .prog{display:inline-block;width:60px;height:6px;background:var(--line);border-radius:3px;vertical-align:middle;margin-left:8px;overflow:hidden}
+.lbl .prog i{display:block;height:100%;background:var(--good)}
+.lbl .pct{font-size:11px;color:var(--muted);margin-left:4px}
+.lbl .tag{font-size:10px;padding:1px 6px;border-radius:99px;margin-left:6px;font-weight:700}
+.tag.late{background:var(--crit-soft);color:var(--crit)}
+.tag.today{background:var(--accent-soft);color:var(--accent)}
+.tag.done{background:var(--good-soft);color:var(--good)}
+.tag.pre{background:var(--surface2);color:var(--muted)}
+.legend{display:flex;gap:14px;flex-wrap:wrap;font-size:12px;color:var(--muted);padding:10px 4px 0}
+.legend span{display:flex;align-items:center;gap:5px}.legend b{width:14px;height:8px;border-radius:2px;display:inline-block}
+/* cards */
+.cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:12px}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:14px 16px;display:flex;flex-direction:column;gap:8px;border-top:4px solid var(--line)}
+.card.st-today{border-top-color:var(--accent)}.card.st-late{border-top-color:var(--crit)}.card.st-done{border-top-color:var(--good)}.card.st-pre{border-top-color:var(--muted)}
+.card h3{font-size:17px;font-weight:700;display:flex;justify-content:space-between;align-items:center;gap:8px}
+.card .meta{font-size:12px;color:var(--muted)}
+.card .row{display:flex;justify-content:space-between;gap:8px;font-size:13px}
+.card .row .k{color:var(--muted);flex:0 0 60px}
+.card .pbar{height:8px;background:var(--line);border-radius:4px;overflow:hidden}.card .pbar i{display:block;height:100%;background:var(--good)}
+.card .acts{display:flex;gap:6px;flex-wrap:wrap;margin-top:4px}
+.card .acts .btn{padding:5px 10px;font-size:12px}
+.chip{font-size:11px;padding:2px 8px;border-radius:99px;font-weight:700;white-space:nowrap}
+/* workers */
+.wk{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:12px}
+.wk .card ul{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:6px}
+.wk .card li{display:flex;gap:8px;align-items:center;font-size:13px}
+.wk .card li b.sw{width:10px;height:10px;border-radius:2px;flex:none}
+.wk .card li .d{color:var(--muted);font-size:12px;margin-left:auto}
+.empty{padding:40px;text-align:center;color:var(--muted);background:var(--surface);border:1px dashed var(--line);border-radius:10px}
+/* modal */
+.modal{position:fixed;inset:0;background:rgba(10,16,22,.45);display:none;align-items:center;justify-content:center;z-index:50;padding:16px}
+.modal.open{display:flex}
+.dlg{background:var(--surface);border-radius:12px;box-shadow:var(--shadow);width:min(720px,100%);max-height:92vh;overflow:auto;padding:20px 22px}
+.dlg h2{font-size:18px;margin-bottom:12px}
+.form{display:grid;grid-template-columns:1fr 1fr;gap:10px 14px}
+.form .full{grid-column:1/-1}
+.field{display:flex;flex-direction:column;gap:4px}
+.field label{font-size:11px;color:var(--muted);letter-spacing:.06em}
+.field input,.field select,.field textarea{border:1px solid var(--line);border-radius:6px;padding:7px 9px;background:var(--ground)}
+.reader{border:1px solid var(--line);border-radius:8px;background:var(--accent-soft);padding:10px 12px;margin-bottom:14px}
+.reader .rhead{display:flex;flex-direction:column;gap:2px;margin-bottom:8px;font-size:12px}
+.reader .rhead b{font-size:13px}.reader .rhead span{color:var(--muted)}
+.reader .rbody{display:grid;grid-template-columns:1fr;gap:8px}
+.reader .steps{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:10px}
+.reader .step{display:flex;gap:8px;align-items:flex-start;background:var(--surface);border:1px solid var(--line);border-radius:6px;padding:8px 10px;font-size:12px}
+.reader .step .n{flex:none;width:22px;height:22px;border-radius:50%;background:var(--accent);color:var(--accent-ink);font-weight:700;display:flex;align-items:center;justify-content:center}
+.reader .step .sub{color:var(--muted);font-size:11px}
+.reader .drop{flex-direction:column;gap:8px;padding:18px}
+.reader .btn.big{font-size:15px;padding:10px 18px}
+.reader .pickrow{display:flex;align-items:center;gap:10px;flex-wrap:wrap;justify-content:center}
+.reader .picklbl{font-weight:700;font-size:15px}
+.reader .nativefile{font-size:15px;padding:8px;border:2px solid var(--accent);border-radius:8px;background:var(--surface);max-width:100%}
+.reader .nativefile::file-selector-button{font:inherit;font-weight:700;background:var(--accent);color:var(--accent-ink);border:0;border-radius:6px;padding:8px 14px;margin-right:10px;cursor:pointer}
+.reader .droptext{color:var(--muted)}
+.reader .alt summary{cursor:pointer;font-size:12px;color:var(--accent)}
+.reader .alt textarea{width:100%;margin-top:6px}
+.reader.off .rhead span{color:var(--crit);font-weight:700}
+.reader .drop{border:1.5px dashed var(--accent);border-radius:6px;padding:14px;text-align:center;font-size:12px;color:var(--accent);cursor:pointer;display:flex;align-items:center;justify-content:center;min-height:74px;background:var(--surface)}
+.reader .drop.over{background:var(--surface2)}
+.reader textarea{border:1px solid var(--line);border-radius:6px;padding:7px 9px;background:var(--surface);resize:vertical;min-height:74px}
+.reader .racts{grid-column:1/-1;display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.reader .rstatus{font-size:12px;color:var(--muted)}
+.reader .thumbs{grid-column:1/-1;display:flex;gap:6px;flex-wrap:wrap}
+.reader .thumbs img{height:48px;border-radius:4px;border:1px solid var(--line)}
+@media (max-width:700px){.reader .steps{grid-template-columns:1fr}}
+.tasks-edit{grid-column:1/-1;border-top:1px solid var(--line);padding-top:10px;margin-top:4px}
+.tasks-edit h3{font-size:13px;margin-bottom:6px;display:flex;justify-content:space-between;align-items:center}
+.trow{display:grid;grid-template-columns:auto 1.4fr 1fr 1fr 1fr .9fr auto;gap:6px;margin-bottom:6px;align-items:center}
+.trow input,.trow select{border:1px solid var(--line);border-radius:6px;padding:6px 8px;background:var(--ground);min-width:0}
+.trow .x{border:0;background:transparent;color:var(--muted);cursor:pointer;font-size:16px;padding:0 6px}
+.trow .tml{display:flex;align-items:center;justify-content:center}.trow .tml span{display:none}.trow .tm{width:18px;height:18px;margin:0 2px;accent-color:var(--accent)}
+.g tr.task.dim td{opacity:.38}.g tr.task.dim:hover td{opacity:1}
+.minebtn{border:0;background:transparent;cursor:pointer;font-size:13px;padding:0 3px;color:var(--muted);line-height:1}.minebtn.on{color:#e0a100}
+.tag.mine{background:#fff3c4;color:#8a6100}
+#mineBtn.on{background:#fff3c4;border-color:#e0a100;color:#8a6100}
+.done-help{color:var(--muted);font-size:13px;margin:0 0 10px}
+.thead{display:grid;grid-template-columns:auto 1.4fr 1fr 1fr 1fr .9fr auto;gap:6px;font-size:11px;color:var(--muted);margin-bottom:4px}
+.dlg .foot{display:flex;gap:8px;justify-content:flex-end;margin-top:14px;align-items:center}
+.dlg .foot .hint{font-size:12px;color:var(--muted);margin-right:auto}
+.toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:var(--ink);color:var(--ground);padding:9px 16px;border-radius:8px;font-size:13px;opacity:0;transition:opacity .2s;pointer-events:none;z-index:60}
+.toast.show{opacity:1}
+.notice{margin:0 0 12px;padding:10px 14px;border-radius:8px;background:var(--warn-soft);color:var(--ink);font-size:13px;display:none}
+.notice.show{display:block}
+/* TV mode */
+body.tv .top,body.tv .strip{padding-left:24px;padding-right:24px}
+body.tv main{padding:14px 24px}
+body.tv .g th,body.tv .g td{height:42px}
+body.tv .g .day{width:40px;min-width:40px}
+body.tv .g .lbl{min-width:300px;width:300px;font-size:15px}
+body.tv .g tr.task td.lbl{font-size:14px}
+body.tv .bar{height:20px;top:11px;font-size:12px}
+body.tv .gwrap{max-height:calc(100vh - 220px)}
+@media (max-width:700px){
+  body{font-size:15px}
+  .tabs{grid-template-columns:1fr 1fr 1fr 1fr 1fr}
+  .inbox{grid-template-columns:1fr}
+  .top{padding:8px 10px;gap:8px}
+  .brand h1{font-size:18px}.brand .co{display:none}
+  .tabs{order:10;width:100%;display:grid;grid-template-columns:1fr 1fr 1fr 1fr 1fr}
+  .tabs button{padding:9px 4px;font-size:14px}
+  .spacer{display:none}
+  #tvBtn,#mgrFilter{display:none}
+  .sync{display:none}
+  #importBtn,#addBtn{flex:1;padding:10px 6px;font-size:14px;text-align:center}
+  .strip{grid-template-columns:repeat(3,1fr);gap:6px;padding:10px 10px 0}
+  .stat{padding:8px 10px}.stat .l{font-size:10px;letter-spacing:0}.stat .v{font-size:20px}
+  .stat:nth-child(5),.stat:nth-child(6){display:none}
+  main{padding:10px 10px 30px}
+  .cards{grid-template-columns:1fr}
+  .card h3{font-size:18px}.card .row{font-size:14px}
+  .card .acts{display:grid;grid-template-columns:1fr 1fr;gap:8px}.card .acts .btn{padding:10px 8px;font-size:14px;text-align:center}
+  .wk{grid-template-columns:1fr}
+  /* ガント（横スクロール） */
+  .gwrap{max-height:none;border-radius:8px}
+  .g .lbl{min-width:180px;width:180px;padding:0 6px}
+  .g tr.site td.lbl{font-size:13px}.g tr.site .l2{gap:6px;font-size:10px;flex-wrap:wrap}.g tr.site .l2 .who{max-width:80px}.g tr.site .l2 .prog{width:40px}
+  .g tr.task td.lbl{font-size:12px;padding-left:6px}.g tr.task td.lbl .w{display:none}
+  .g .day{width:30px;min-width:30px}
+  .bar{font-size:10px}
+  .legend{font-size:11px;gap:8px}
+  /* 入力画面：全画面 */
+  .modal{padding:0;align-items:stretch}
+  .dlg{width:100%;max-height:100vh;border-radius:0;padding:14px 14px 90px}
+  .dlg h2{font-size:17px}
+  .form{grid-template-columns:1fr;gap:10px}
+  .field input,.field select,.field textarea,.trow input,.trow select,.reader textarea{font-size:16px;padding:10px}
+  .thead{display:none}
+  .trow{grid-template-columns:auto 1fr 1fr;grid-template-areas:"mine name name" "mine start end" "mine worker status";gap:6px;background:var(--surface2);padding:8px;border-radius:8px;margin-bottom:8px;position:relative}
+  .trow .tml{grid-area:mine;display:flex;flex-direction:column;align-items:center;gap:2px;font-size:11px;color:var(--muted);align-self:start;margin-top:6px}.trow .tn{grid-area:name;padding-right:34px}.trow .ts{grid-area:start}.trow .te{grid-area:end}.trow .tw{grid-area:worker}.trow .tst{grid-area:status}
+  .trow .wkr,.trow .st{display:block}.trow .tml span{display:inline}
+  .trow .x{position:absolute;right:8px;top:10px;font-size:20px}
+  .dlg .foot{position:fixed;left:0;right:0;bottom:0;background:var(--surface);border-top:1px solid var(--line);padding:10px 12px;margin:0;gap:8px;z-index:60;flex-wrap:wrap}
+  .dlg .foot .hint{display:none}
+  .dlg .foot .btn{flex:1;padding:12px 8px;font-size:15px;text-align:center}
+  #delBtn{flex:0 0 auto}
+  .reader{padding:10px}.reader .steps{grid-template-columns:1fr}.reader .step{padding:6px 8px}
+  .reader .btn.big{width:100%}
+  .reader .pickrow{flex-direction:column;align-items:stretch}.reader .nativefile{width:100%}
+  .reader .droptext{display:none}
+  .toast{width:calc(100% - 24px);text-align:center}
+}
+@media (prefers-reduced-motion:reduce){.toast{transition:none}}
+</style>
+<style>body{margin:0}img{max-width:100%}[hidden]{display:none!important}</style>
+</head>
+<body>
+
+
+<header class="top">
+  <div class="brand"><h1>現場ボード</h1><span class="co">河建株式会社</span></div>
+  <div class="tabs" role="tablist">
+    <button role="tab" aria-selected="true" data-view="gantt">工程ボード</button>
+    <button role="tab" aria-selected="false" data-view="cards">現場一覧</button>
+    <button role="tab" aria-selected="false" data-view="workers">職人別</button>
+    <button role="tab" aria-selected="false" data-view="inbox">受付箱<span class="badge" id="inboxBadge" hidden>0</span></button>
+    <button role="tab" aria-selected="false" data-view="done">完了<span class="badge" id="doneBadge" hidden>0</span></button>
+  </div>
+  <div class="spacer"></div>
+  <button class="btn on" id="mineBtn" title="自社（河建）担当の工程を強調表示します（他の工程は薄く表示。消えません）">★ 自社を強調</button>
+  <select id="mgrFilter" class="btn" title="担当者で絞り込み"><option value="">担当者：全員</option></select>
+  <span class="sync" id="sync"><i></i><span id="syncText">接続中…</span></span>
+  <button class="btn" id="tvBtn" title="事務所の大画面向けに文字とセルを大きくします">大画面モード</button>
+  <button class="btn primary" id="importBtn" title="工程表のPDF・写真から自動入力">📄 工程表を読み込む</button>
+  <button class="btn" id="addBtn">＋ 手入力で追加</button>
+</header>
+
+<div class="strip" id="strip"></div>
+
+<main>
+  <div class="notice" id="notice"></div>
+  <section class="view active" id="view-gantt">
+    <div class="gwrap" id="gwrap"></div>
+    <div class="legend" id="legend"></div>
+  </section>
+  <section class="view" id="view-cards"><div class="cards" id="cards"></div></section>
+  <section class="view" id="view-workers"><div class="wk" id="workers"></div></section>
+  <section class="view" id="view-inbox">
+    <p class="inbox-help">写真や貼り付けた文字は、まずここに預けられます。AIが順番に読み取って現場に登録すると「処理済み」になります（自動処理は毎時。急ぐ場合はチャットで「受付箱を処理して」とお伝えください）。</p>
+    <div class="inbox" id="inboxList"></div>
+  </section>
+  <section class="view" id="view-done">
+    <p class="done-help">完工予定日（自社工程の最終日）から7日過ぎた現場は自動でここに移ります。「ボードに戻す」でいつでも復帰できます。工程表PDFの出力もここから可能です。</p>
+    <div class="cards" id="doneCards"></div>
+  </section>
+</main>
+
+<div class="modal" id="modal">
+  <div class="dlg">
+    <h2 id="dlgTitle">現場を追加</h2>
+    <div class="reader" id="reader">
+      <div class="rhead"><b>工程表から自動入力（3ステップ）</b><span id="readerHint">工程表のPDFを選んで「読み取る」を押すだけで、下のフォームが自動で埋まります。</span></div>
+      <div class="steps">
+        <div class="step"><span class="n">1</span><div><b>ファイルを選ぶ</b><div class="sub">PDF・写真・スクリーンショット（複数可）。文字を貼り付けても可</div></div></div>
+        <div class="step"><span class="n">2</span><div><b>「読み取る」を押す</b><div class="sub">10〜40秒で下のフォームに反映</div></div></div>
+        <div class="step"><span class="n">3</span><div><b>確認して「保存」</b><div class="sub">日付・作業名をチェックしてから保存</div></div></div>
+      </div>
+      <div class="rbody">
+        <div class="drop" id="drop">
+          <div class="pickrow"><span class="picklbl">① ファイルを選ぶ →</span><input type="file" id="rfile" multiple accept="image/*,application/pdf,.pdf" class="nativefile"></div>
+          <button class="btn" id="pickBtn" type="button" style="display:none">📄 ファイルを選ぶ（PDF・写真）</button>
+          <span id="dropText" class="droptext">パソコンならここにドラッグ＆ドロップ、スマホなら上のボタンからカメラ／写真を選べます</span>
+        </div>
+        <details class="alt"><summary>文字で貼り付ける場合はこちら（Excel・LINEからコピー）</summary>
+          <textarea id="rtext" rows="3" placeholder="例：山田様邸 9/10〜9/30 足場9/10 洗浄9/11 外壁9/14〜9/25 …"></textarea>
+        </details>
+        <div class="racts"><button class="btn primary" id="readBtn" type="button">▶ 読み取る</button><button class="btn" id="readStop" type="button" hidden>中止</button><span id="readStatus" class="rstatus"></span></div>
+      </div>
+    </div>
+    <div class="form">
+      <div class="field"><label>物件名</label><input id="f-name" placeholder="例：山田様邸"></div>
+      <div class="field"><label>顧客名（お施主様）</label><input id="f-customer" placeholder="例：山田 太郎"></div>
+      <div class="field"><label>担当者</label><input id="f-manager" placeholder="例：河内"></div>
+      <div class="field full"><label>施工業者（元請け・協力業者）</label><input id="f-contractor" placeholder="例：A足場、B工業、自社班"></div>
+      <div class="field full"><label>現場住所</label><input id="f-address" placeholder="例：東浦町緒川…"></div>
+      <div class="field full"><label>工事内容</label><input id="f-work" placeholder="例：外壁 樹脂サイディングカバー工法（LIXIL）"></div>
+      <div class="field"><label>着工予定日</label><input id="f-start" type="date"></div>
+      <div class="field"><label>完工予定日</label><input id="f-end" type="date"></div>
+      <div class="tasks-edit">
+        <h3>作業工程 <button class="btn" id="addTaskRow" type="button">＋ 工程を追加</button></h3>
+        <div class="thead"><span title="自社（河建）が担当する工程">自社</span><span>作業内容</span><span>開始</span><span>終了</span><span class="wkr">職人・業者</span><span class="st">状態</span><span></span></div>
+        <div id="taskRows"></div>
+        <div class="field full" style="margin-top:6px"><label>備考（工程表の注記）</label><textarea id="f-note" rows="2" placeholder="例：※9/18迄に足場組お願いします。"></textarea></div>
+      </div>
+    </div>
+    <div class="foot">
+      <span class="hint" id="hint">同じ画面を開いている全員にすぐ反映されます</span>
+      <button class="btn" id="pdfBtn" type="button" title="この内容で河建書式の工程表PDFを作成">📄 工程表PDF</button>
+      <button class="btn" id="archBtn" type="button">完了にする</button>
+      <button class="btn danger" id="delBtn" type="button">削除</button>
+      <button class="btn" id="cancelBtn" type="button">閉じる</button>
+      <button class="btn primary" id="saveBtn" type="button">保存</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal" id="shiftModal">
+  <div class="dlg" style="width:min(460px,100%)">
+    <h2>工程をずらす</h2>
+    <p style="margin:0 0 12px;color:var(--muted);font-size:13px">雨天・遅延で全体を後ろにずらします。未完了の工程と完工予定日が対象です。</p>
+    <div class="field"><label>ずらす日数</label><input id="shiftDays" type="number" value="1" min="-30" max="60"></div>
+    <div class="foot"><button class="btn" id="shiftCancel" type="button">閉じる</button><button class="btn primary" id="shiftOk" type="button">ずらす</button></div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+(function(){
+const $=s=>document.querySelector(s);
+const TODAY=(()=>{const d=new Date();return new Date(d.getFullYear(),d.getMonth(),d.getDate());})();
+const DAY=86400000;
+const fmt=d=>`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+const parse=s=>{if(!s)return null;const [y,m,d]=s.split('-').map(Number);return new Date(y,m-1,d);};
+const addDays=(s,n)=>fmt(new Date(parse(s).getTime()+n*DAY));
+const jp=s=>{const d=parse(s);return d?`${d.getMonth()+1}/${d.getDate()}`:'—';};
+const WD='日月火水木金土';
+const STATUS=['予定','作業中','完了'];
+const KIND=[['足場','ashiba'],['洗浄','senjo'],['シーリング','seal'],['コーキング','seal'],['外壁','gaiheki'],['サイディング','gaiheki'],['塗装','gaiheki'],['屋根','yane'],['内装','naiso'],['クロス','naiso'],['床','naiso']];
+const KINDNAME={ashiba:'足場',senjo:'洗浄',seal:'シーリング',gaiheki:'外壁',yane:'屋根',naiso:'内装',other:'その他'};
+const kindOf=n=>{for(const [k,v] of KIND){if((n||'').includes(k))return v;}return 'other';};
+const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const uid=()=>Math.random().toString(36).slice(2,10);
+
+let db=null,sites=[],collapsed=new Set(),editingId=null,shiftId=null;
+const LS='kawaken-board-local';
+
+/* ---------- state derivation ---------- */
+function taskState(t){
+  if(t.status==='完了')return 'done';
+  if(t.end&&parse(t.end)<TODAY)return 'late';
+  if(t.start&&t.end&&parse(t.start)<=TODAY&&parse(t.end)>=TODAY)return 'today';
+  if(t.status==='作業中')return 'today';
+  return 'pre';
+}
+function hasMine(s){return (s.tasks||[]).some(t=>t.mine);}
+function myTasks(s){const ts=s.tasks||[];return (mineOnly&&hasMine(s))?ts.filter(t=>t.mine):ts;}
+function lastEnd(s){let m=s.end||'';(hasMine(s)?(s.tasks||[]).filter(t=>t.mine):(s.tasks||[])).forEach(t=>{const e=t.end||t.start;if(e&&(!m||e>m))m=e;});return m;}
+function isArchived(s){if(s.archived===true)return true;if(s.archived===false)return false;const e=parse(lastEnd(s));return !!e&&(TODAY-e)/DAY>7;}
+function siteInfo(s){
+  const ts=myTasks(s);
+  const done=ts.filter(t=>t.status==='完了').length;
+  const late=ts.filter(t=>taskState(t)==='late');
+  const todays=ts.filter(t=>taskState(t)==='today');
+  const pct=ts.length?Math.round(done/ts.length*100):0;
+  let st='pre';
+  if(ts.length&&done===ts.length)st='done';
+  else if(late.length)st='late';
+  else if(todays.length)st='today';
+  const next=ts.filter(t=>t.status!=='完了'&&t.start&&parse(t.start)>TODAY).sort((a,b)=>a.start<b.start?-1:1)[0];
+  return {done,total:ts.length,pct,late,todays,st,next};
+}
+const STLABEL={late:'遅延あり',today:'施工中',done:'完工',pre:'着工前'};
+
+/* ---------- render ---------- */
+let mgrFilter='';let mineOnly=true;try{if(localStorage.getItem(LS+'-mine')==='0')mineOnly=false;}catch(_){}
+function liveSites(){return sites.filter(s=>!isArchived(s));}
+function visibleSites(){const l=liveSites();return mgrFilter?l.filter(s=>(s.manager||'')===mgrFilter):l;}
+$('#mineBtn').onclick=()=>{mineOnly=!mineOnly;try{localStorage.setItem(LS+'-mine',mineOnly?'1':'0');}catch(_){}render();};
+function render(){
+  const sel=$('#mgrFilter');const cur=sel.value;const mgrs=[...new Set(sites.map(s=>s.manager).filter(Boolean))].sort((a,b)=>a.localeCompare(b,'ja'));
+  sel.innerHTML='<option value="">担当者：全員</option>'+mgrs.map(m=>`<option ${m===cur?'selected':''}>${esc(m)}</option>`).join('');if(!mgrs.includes(cur)){mgrFilter='';sel.value='';}
+  $('#mineBtn').classList.toggle('on',mineOnly);$('#mineBtn').textContent=mineOnly?'★ 自社を強調':'☆ 強調なし';
+  const dn=sites.filter(isArchived).length;const db_=$('#doneBadge');db_.textContent=dn;db_.hidden=!dn;
+  renderStrip();renderGantt();renderCards();renderWorkers();renderDone();
+}
+$('#mgrFilter').onchange=e=>{mgrFilter=e.target.value;render();};
+function renderStrip(){
+  const infos=visibleSites().map(siteInfo);
+  const active=infos.filter(i=>i.st==='today'||i.st==='late').length;
+  const late=infos.filter(i=>i.st==='late').length;
+  const todayTasks=infos.reduce((a,i)=>a+i.todays.length,0);
+  const pre=infos.filter(i=>i.st==='pre').length;
+  const wk=new Set();visibleSites().forEach(s=>myTasks(s).forEach(t=>{if(taskState(t)==='today'&&t.worker)wk.add(t.worker)}));
+  $('#strip').innerHTML=`
+    <div class="stat"><span class="l">本日 ${TODAY.getMonth()+1}/${TODAY.getDate()}（${WD[TODAY.getDay()]}）</span><span class="v">${visibleSites().length}<small style="font-size:13px;color:var(--muted);font-weight:500"> 現場</small></span></div>
+    <div class="stat good"><span class="l">施工中</span><span class="v">${active}</span></div>
+    <div class="stat ${late?'crit':''}"><span class="l">遅延あり</span><span class="v">${late}</span></div>
+    <div class="stat"><span class="l">本日の作業</span><span class="v">${todayTasks}</span></div>
+    <div class="stat"><span class="l">本日稼働の職人・業者</span><span class="v">${wk.size}</span></div>
+    <div class="stat"><span class="l">全体進捗（工程ベース）</span><span class="v">${(()=>{const d=infos.reduce((a,i)=>a+i.done,0),t=infos.reduce((a,i)=>a+i.total,0);return t?Math.round(d/t*100):0;})()}%</span></div>`;
+}
+function ganttRange(){
+  let min=new Date(TODAY.getTime()-7*DAY),max=new Date(TODAY.getTime()+35*DAY);
+  visibleSites().forEach(s=>{[s.start,s.end,...myTasks(s).flatMap(t=>[t.start,t.end])].forEach(d=>{const p=parse(d);if(!p)return;if(p<min)min=new Date(p.getTime()-2*DAY);if(p>max)max=new Date(p.getTime()+3*DAY);});});
+  const days=[];for(let d=min;d<=max;d=new Date(d.getTime()+DAY))days.push(d);
+  return days;
+}
+function renderGantt(){
+  const wrap=$('#gwrap');
+  if(!visibleSites().length){wrap.innerHTML=`<div class="empty">現場がまだありません。右上の「📄 工程表を読み込む」からPDF・写真を入れるか、「＋ 手入力で追加」で工程を入力すると、ここに反映されます。</div>`;return;}
+  const days=ganttRange();
+  const idx=s=>{const p=parse(s);if(!p)return -1;return Math.round((p-days[0])/DAY);};
+  let mo='',moCells='',dayCells='';
+  const groups=[];days.forEach((d,i)=>{const key=`${d.getFullYear()}/${d.getMonth()+1}`;if(key!==mo){mo=key;groups.push({key,label:`${d.getFullYear()}年${d.getMonth()+1}月`,n:0,i});}groups[groups.length-1].n++;});
+  moCells=groups.map((g,k)=>`<th class="mo${k?' first':''}" colspan="${g.n}">${g.label}</th>`).join('');
+  dayCells=days.map(d=>{const wd=d.getDay();const cls=['day',wd===6?'sat':'',wd===0?'sun':'',d.getTime()===TODAY.getTime()?'today':''].join(' ');return `<th class="${cls}"><span class="d">${d.getDate()}</span>${WD[wd]}</th>`;}).join('');
+  const cellRow=(content)=>days.map((d,i)=>{const wd=d.getDay();const cls=['cell',wd===6?'sat':'',wd===0?'sun':'',d.getTime()===TODAY.getTime()?'today':''].join(' ');return `<td class="${cls}">${content(i)}</td>`;}).join('');
+  const sorted=[...visibleSites()].sort((a,b)=>{const o={late:0,today:1,pre:2,done:3};const da=siteInfo(a).st,dbb=siteInfo(b).st;return o[da]-o[dbb]||((a.start||'')<(b.start||'')?-1:1);});
+  let body='';
+  sorted.forEach(s=>{
+    const info=siteInfo(s);const col=collapsed.has(s.id);
+    const si=idx(s.start),ei=idx(s.end);
+    body+=`<tr class="site" data-id="${s.id}"><td class="lbl" data-toggle="${s.id}"><div class="l1">${col?'▸':'▾'} ${esc(s.name)}<span class="tag ${info.st}">${STLABEL[info.st]}</span>${hasMine(s)?`<span class="tag mine" title="自社担当の工程数 / 全工程数">★ 自社 ${(s.tasks||[]).filter(t=>t.mine).length}/${(s.tasks||[]).length}</span>`:''}</div><div class="l2"><span class="who" title="顧客">👤 ${esc(s.customer||'—')}</span><span class="who" title="担当者">🛠 ${esc(s.manager||'—')}</span>${s.contractor?`<span class="who" title="施工業者">🏢 ${esc(s.contractor)}</span>`:''}<span class="prog"><i style="width:${info.pct}%"></i></span><span class="pct"><b>${info.pct}%</b> ${info.done}/${info.total}</span></div></td>`;
+    body+=cellRow(i=>{
+      let h='';
+      if(si>=0&&i===si&&ei>=si){h+=`<div class="bar site" style="width:${(ei-si+1)*34-4}px;background:var(--muted)" title="${esc(s.name)} ${jp(s.start)}〜${jp(s.end)}"></div>`;}
+      if(col){(s.tasks||[]).filter(t=>!(mineOnly&&hasMine(s))||t.mine).forEach(t=>{const a=idx(t.start),b=idx(t.end||t.start);if(a===i&&a>=0){h+=`<div class="bar ${taskState(t)==='late'?'late':''} ${t.status==='完了'?'done':''}" style="width:${(b-a+1)*34-4}px;background:var(--c-${kindOf(t.name)});top:${col?18:9}px;height:10px;font-size:0" data-edit="${s.id}" title="${esc(t.name)} ${jp(t.start)}〜${jp(t.end)}"></div>`;}});}
+      return h;});
+    body+=`</tr>`;
+    if(!col)(s.tasks||[]).forEach(t=>{
+      const a=idx(t.start),b=idx(t.end||t.start);const st=taskState(t);const dim=mineOnly&&hasMine(s)&&!t.mine;
+      body+=`<tr class="task${dim?' dim':''}"><td class="lbl"><button class="minebtn ${t.mine?'on':''}" data-mine="${s.id}|${t.id}" title="${t.mine?'自社担当の工程（クリックで解除）':'クリックで「自社担当」にする'}">${t.mine?'★':'☆'}</button><button class="stbtn st-${t.status==='完了'?'done':t.status==='作業中'?'today':'pre'}" data-cycle="${s.id}|${t.id}" title="クリックで 予定→作業中→完了 と切替">${t.status==='完了'?'✓':t.status==='作業中'?'▶':'○'}</button>${esc(t.name)}<span class="w">${esc(t.worker||'')}</span>${st==='late'?'<span class="tag late">遅延</span>':''}</td>`;
+      body+=cellRow(i=>{
+        if(a!==i||a<0)return '';
+        const one=b===a;
+        return `<div class="bar ${one?'one':''} ${st==='late'?'late':''} ${t.status==='完了'?'done':''}" style="width:${(b-a+1)*34-4}px;background:var(--c-${kindOf(t.name)})" data-edit="${s.id}" title="${esc(t.name)} ${jp(t.start)}〜${jp(t.end)} ${esc(t.worker||'')}${t.note?' / '+esc(t.note):''}">${one?'':esc(t.name)}</div>`;
+      });
+      body+=`</tr>`;
+    });
+  });
+  const _sl=wrap.scrollLeft,_st=wrap.scrollTop,_had=!!wrap.querySelector('table.g');
+  wrap.innerHTML=`<table class="g"><thead><tr><th class="lbl" rowspan="2">現場 / 作業内容</th>${moCells}</tr><tr>${dayCells}</tr></thead><tbody>${body}</tbody></table>`;
+  const td=wrap.querySelector('th.day.today');if(_had){wrap.scrollLeft=_sl;wrap.scrollTop=_st;}else if(td){wrap.scrollLeft=Math.max(0,td.offsetLeft-250-34*4);}
+  $('#legend').innerHTML=Object.entries(KINDNAME).map(([k,v])=>`<span><b style="background:var(--c-${k})"></b>${v}</span>`).join('')+`<span><b style="background:transparent;outline:2px solid var(--crit)"></b>遅延（終了日超過・未完了）</span><span><b style="background:var(--sat)"></b>土</span><span><b style="background:var(--sun)"></b>日</span>`;
+}
+function renderCards(){
+  const el=$('#cards');
+  if(!visibleSites().length){el.innerHTML=`<div class="empty" style="grid-column:1/-1">現場がありません。</div>`;return;}
+  const sorted=[...visibleSites()].sort((a,b)=>{const o={late:0,today:1,pre:2,done:3};return o[siteInfo(a).st]-o[siteInfo(b).st];});
+  el.innerHTML=sorted.map(s=>{
+    const i=siteInfo(s);
+    const todayList=i.todays.map(t=>`<span class="chip" style="background:var(--c-${kindOf(t.name)});color:#fff">${esc(t.name)}${t.worker?'・'+esc(t.worker):''}</span>`).join(' ')||'<span style="color:var(--muted)">本日の作業なし</span>';
+    const lateList=i.late.map(t=>`${esc(t.name)}（${jp(t.end)}迄）`).join('、');
+    return `<div class="card st-${i.st}">
+      <h3><span>${esc(s.name)}</span><span class="chip" style="background:var(--${i.st==='late'?'crit':i.st==='today'?'accent':i.st==='done'?'good':'surface2'}-soft, var(--surface2));color:var(--${i.st==='late'?'crit':i.st==='today'?'accent':i.st==='done'?'good':'muted'})">${STLABEL[i.st]}</span></h3>
+      <div class="meta">${esc(s.work||'')}${s.address?'　'+esc(s.address):''}</div>
+      <div class="row"><span class="k">工期</span><span class="mono">${jp(s.start)} 〜 ${jp(s.end)}</span></div>
+      <div class="row"><span class="k">顧客</span><span>${esc(s.customer||'—')}</span></div>
+      <div class="row"><span class="k">担当</span><span>${esc(s.manager||'—')}</span></div>
+      <div class="row"><span class="k">施工業者</span><span>${esc(s.contractor||'—')}</span></div>
+      <div class="row"><span class="k">本日</span><span style="display:flex;gap:4px;flex-wrap:wrap">${todayList}</span></div>
+      ${i.late.length?`<div class="row" style="color:var(--crit)"><span class="k">遅延</span><span>${lateList}</span></div>`:''}
+      ${i.next?`<div class="row"><span class="k">次工程</span><span>${esc(i.next.name)}（${jp(i.next.start)}〜）</span></div>`:''}
+      <div class="row"><span class="k">進捗</span><span style="flex:1"><span class="pbar"><i style="width:${i.pct}%"></i></span></span><span class="mono">${i.pct}%</span></div>
+      ${s.note?`<div class="meta">${esc(s.note)}</div>`:''}
+      <div class="acts"><button class="btn" data-edit="${s.id}">編集</button><button class="btn" data-shift="${s.id}">工程をずらす</button><button class="btn" data-pdf="${s.id}">📄 工程表PDF</button><button class="btn" data-done="${s.id}">本日分を完了にする</button></div>
+    </div>`;}).join('');
+}
+function renderDone(){
+  const el=$('#doneCards');if(!el)return;
+  const list=sites.filter(isArchived).sort((a,b)=>lastEnd(a)<lastEnd(b)?1:-1);
+  if(!list.length){el.innerHTML=`<div class="empty" style="grid-column:1/-1">完了した現場はまだありません。</div>`;return;}
+  el.innerHTML=list.map(s=>{const ts=myTasks(s);const left=ts.filter(t=>t.status!=='完了').length;
+    return `<div class="card st-done"><h3><span>${esc(s.name)}</span><span class="chip" style="background:var(--good-soft,var(--surface2));color:var(--good)">完了</span></h3>
+      <div class="meta">${esc(s.work||'')}${s.address?'　'+esc(s.address):''}</div>
+      <div class="row"><span class="k">工期</span><span class="mono">${jp(s.start)} 〜 ${jp(lastEnd(s))}</span></div>
+      <div class="row"><span class="k">顧客</span><span>${esc(s.customer||'—')}</span></div>
+      <div class="row"><span class="k">担当</span><span>${esc(s.manager||'—')}</span></div>
+      <div class="row"><span class="k">工程</span><span>${ts.length}件${left?`（<span style="color:var(--warn)">未完了チェック ${left}件</span>）`:'（すべて完了）'}</span></div>
+      <div class="acts"><button class="btn" data-unarch="${s.id}">↩ ボードに戻す</button><button class="btn" data-edit="${s.id}">編集</button><button class="btn" data-pdf="${s.id}">📄 工程表PDF</button></div>
+    </div>`;}).join('');
+}
+const STL={pending:'未処理（AI待ち）',done:'処理済み',failed:'読み取り失敗'};
+function renderInbox(docs){
+  const el=$('#inboxList');if(!el)return;
+  if(!docs.length){el.innerHTML=`<div class="empty" style="grid-column:1/-1">受付箱は空です。写真や文字を「工程表を読み込む」から送るとここに並びます。</div>`;return;}
+  el.innerHTML=docs.map(d=>{const when=d.createdAt?new Date(d.createdAt).toLocaleString('ja-JP',{month:'numeric',day:'numeric',hour:'2-digit',minute:'2-digit'}):'';
+    return `<div class="item">${d.image?`<img src="${d.image}" alt="">`:`<div style="width:96px;height:96px;flex:none;border-radius:6px;background:var(--surface2);display:flex;align-items:center;justify-content:center;font-size:24px">📝</div>`}
+      <div class="txt"><b>${esc(d.filename||(d.note?d.note.slice(0,30):'（無題）'))}</b>${when}<br><span class="st st-${d.status||'pending'}">${STL[d.status]||d.status||''}</span>${d.result?`<div>→ ${esc(d.result)}</div>`:''}${d.note&&d.filename?`<div>メモ：${esc(d.note.slice(0,60))}</div>`:''}
+      <button class="btn" data-inboxdel="${d.id}">削除</button></div></div>`;}).join('');
+}
+function renderWorkers(){
+  const el=$('#workers');const map={};
+  liveSites().forEach(s=>myTasks(s).forEach(t=>{if(t.status==='完了')return;const w=t.worker||'（未割当）';(map[w]=map[w]||[]).push({...t,site:s.name});}));
+  const names=Object.keys(map).sort((a,b)=>a==='（未割当）'?1:b==='（未割当）'?-1:a.localeCompare(b,'ja'));
+  if(!names.length){el.innerHTML=`<div class="empty" style="grid-column:1/-1">未完了の工程がありません。</div>`;return;}
+  el.innerHTML=names.map(w=>{
+    const list=map[w].sort((a,b)=>(a.start||'')<(b.start||'')?-1:1);
+    const todays=list.filter(t=>taskState(t)==='today');
+    const dup=todays.length>1?`<span class="chip" style="background:var(--warn-soft);color:var(--warn)">本日 ${todays.length}現場 重複</span>`:'';
+    return `<div class="card"><h3><span>${esc(w)}</span>${dup}</h3><ul>${list.map(t=>`<li><b class="sw" style="background:var(--c-${kindOf(t.name)})"></b><span>${esc(t.site)}　${esc(t.name)}</span><span class="d mono">${jp(t.start)}〜${jp(t.end)}${taskState(t)==='late'?' <span class="tag late">遅延</span>':''}</span></li>`).join('')}</ul></div>`;
+  }).join('');
+}
+
+/* ---------- persistence ---------- */
+let saving=false;
+/* 楽観的更新：画面は即時に反映し、サーバー保存は裏で行う（失敗時は再取得して戻す） */
+async function persist(site){
+  const i=sites.findIndex(x=>x.id===site.id);if(i>=0)sites[i]=site;else sites.push(site);
+  render();
+  if(db){db.doc('sites/'+site.id).set(site).catch(e=>{toast('保存できませんでした：'+(e&&e.message||e));db._refresh&&db._refresh(true);});}
+  else localSave();
+}
+async function remove(id){
+  sites=sites.filter(s=>s.id!==id);render();
+  if(db){db.doc('sites/'+id).delete().catch(()=>{toast('削除できませんでした');db._refresh&&db._refresh(true);});}
+  else localSave();
+}
+function localSave(){try{localStorage.setItem(LS,JSON.stringify(sites));}catch(e){}}
+function localLoad(){try{sites=JSON.parse(localStorage.getItem(LS)||'[]');}catch(e){sites=[];}}
+
+/* ---------- modal ---------- */
+function taskRow(t={}){
+  const d=document.createElement('div');d.className='trow';
+  d.innerHTML=`<label class="tml" title="自社（河建）が担当する工程"><input class="tm" type="checkbox" ${t.mine?'checked':''}><span>自社</span></label><input class="tn" placeholder="例：足場組立" value="${esc(t.name||'')}"><input class="ts" type="date" value="${t.start||''}"><input class="te" type="date" value="${t.end||''}"><input class="tw wkr" placeholder="職人・業者" value="${esc(t.worker||'')}"><select class="tst st">${STATUS.map(s=>`<option ${t.status===s?'selected':''}>${s}</option>`).join('')}</select><button class="x" type="button" title="この工程を削除">×</button>`;
+  d.dataset.id=t.id||uid();
+  d.querySelector('.x').onclick=()=>d.remove();
+  const ts=d.querySelector('.ts'),te=d.querySelector('.te');
+  ts.addEventListener('change',()=>{if(!te.value||te.value<ts.value)te.value=ts.value;});
+  return d;
+}
+function openModal(id){
+  editingId=id||null;
+  const s=id?sites.find(x=>x.id===id):null;
+  $('#dlgTitle').textContent=s?'現場を編集':'現場を追加';
+  $('#f-name').value=s?.name||'';$('#f-customer').value=s?.customer||'';$('#f-contractor').value=s?.contractor||'';$('#f-manager').value=s?.manager||'';$('#f-address').value=s?.address||'';$('#f-work').value=s?.work||'';
+  $('#f-start').value=s?.start||fmt(TODAY);$('#f-end').value=s?.end||fmt(new Date(TODAY.getTime()+14*DAY));$('#f-note').value=s?.note||'';
+  const rows=$('#taskRows');rows.innerHTML='';
+  const ts=s?.tasks?.length?s.tasks:[{name:'足場組立'},{name:'高圧洗浄'},{name:'シーリング'},{name:'外壁'},{name:'足場解体'}];
+  ts.forEach(t=>rows.appendChild(taskRow(t)));
+  $('#delBtn').style.display=s?'':'none';$('#archBtn').style.display=s?'':'none';if(s)$('#archBtn').textContent=isArchived(s)?'↩ ボードに戻す':'✓ 完了にする';
+  $('#rtext').value='';rfile.value='';setFiles([]);$('#readStatus').textContent='';
+  $('#modal').classList.add('open');$('#f-name').focus();
+}
+function closeModal(){$('#modal').classList.remove('open');}
+function collect(){
+  const tasks=[...document.querySelectorAll('#taskRows .trow')].map(r=>({id:r.dataset.id,mine:r.querySelector('.tm').checked||undefined,name:r.querySelector('.tn').value.trim(),start:r.querySelector('.ts').value,end:r.querySelector('.te').value||r.querySelector('.ts').value,worker:r.querySelector('.tw').value.trim(),status:r.querySelector('.tst').value})).filter(t=>t.name&&t.start);
+  return {id:editingId||uid(),name:$('#f-name').value.trim(),customer:$('#f-customer').value.trim(),contractor:$('#f-contractor').value.trim(),manager:$('#f-manager').value.trim(),address:$('#f-address').value.trim(),work:$('#f-work').value.trim(),start:$('#f-start').value,end:$('#f-end').value,note:$('#f-note').value.trim(),tasks,archived:(editingId&&sites.find(x=>x.id===editingId)||{}).archived,updatedAt:new Date().toISOString()};
+}
+$('#addBtn').onclick=()=>openModal();
+$('#importBtn').onclick=()=>{openModal();setTimeout(()=>{$('#reader').scrollIntoView({block:'start'});if(sampleFn)$('#pickBtn').focus();},50);};
+$('#addTaskRow').onclick=()=>{const rows=$('#taskRows');const last=rows.lastElementChild;const t={};if(last){const e=last.querySelector('.te').value;if(e){t.start=addDays(e,1);t.end=t.start;}}rows.appendChild(taskRow(t));rows.lastElementChild.querySelector('.tn').focus();};
+$('#cancelBtn').onclick=closeModal;
+$('#saveBtn').onclick=async()=>{const s=collect();if(!s.name){toast('物件名を入力してください');return;}if(!s.start||!s.end){toast('着工・完工予定日を入力してください');return;}
+  if(!db){const i=sites.findIndex(x=>x.id===s.id);if(i>=0)sites[i]=s;else sites.push(s);}
+  await persist(s);closeModal();toast('保存しました');};
+$('#archBtn').onclick=async()=>{const s=sites.find(x=>x.id===editingId);if(!s)return;const c=JSON.parse(JSON.stringify(s));c.archived=!isArchived(s);c.updatedAt=new Date().toISOString();if(!db){sites[sites.indexOf(s)]=c;}await persist(c);closeModal();toast(c.archived?'完了タブに移しました':'ボードに戻しました');};
+$('#delBtn').onclick=async()=>{if(!editingId)return;if(!(await ask('この現場を削除しますか？\n（削除すると元に戻せません）')))return;await remove(editingId);closeModal();toast('削除しました');};
+$('#modal').addEventListener('click',e=>{if(e.target.id==='modal')closeModal();});
+document.addEventListener('keydown',e=>{if(e.key==='Escape'){closeModal();$('#shiftModal').classList.remove('open');}});
+
+/* shift */
+$('#shiftCancel').onclick=()=>$('#shiftModal').classList.remove('open');
+$('#shiftOk').onclick=async()=>{const n=parseInt($('#shiftDays').value,10)||0;const s=sites.find(x=>x.id===shiftId);if(!s||!n){$('#shiftModal').classList.remove('open');return;}
+  const c=JSON.parse(JSON.stringify(s));
+  c.tasks=(c.tasks||[]).map(t=>t.status==='完了'?t:{...t,start:addDays(t.start,n),end:addDays(t.end||t.start,n)});
+  if(c.end)c.end=addDays(c.end,n);c.updatedAt=new Date().toISOString();
+  if(!db){const i=sites.findIndex(x=>x.id===c.id);sites[i]=c;}
+  await persist(c);$('#shiftModal').classList.remove('open');toast(`${s.name} の未完了工程を ${n>0?'+':''}${n}日 ずらしました`);};
+
+/* delegated clicks */
+document.addEventListener('click',async e=>{
+  const t=e.target.closest('[data-mine],[data-unarch],[data-inboxdel],[data-pdf],[data-cycle],[data-edit],[data-shift],[data-done],[data-toggle],[data-view]');if(!t)return;
+  if(t.dataset.inboxdel){if(!db)return;if(!(await ask('この受付を削除しますか？')))return;try{await db.doc('inbox/'+t.dataset.inboxdel).delete();toast('削除しました');}catch(e){toast('削除できませんでした');}return;}
+  if(t.dataset.pdf){const s=sites.find(x=>x.id===t.dataset.pdf);if(s)exportPdf(s);return;}
+  if(t.dataset.mine){e.stopPropagation();const [sid,tid]=t.dataset.mine.split('|');const s=sites.find(x=>x.id===sid);if(!s)return;const c=JSON.parse(JSON.stringify(s));const task=(c.tasks||[]).find(x=>x.id===tid);if(!task)return;task.mine=!task.mine;if(!task.mine)delete task.mine;c.updatedAt=new Date().toISOString();if(!db){sites[sites.indexOf(s)]=c;}await persist(c);toast(task.mine?`${task.name}：自社担当にしました`:`${task.name}：自社担当を解除`);return;}
+  if(t.dataset.unarch){const s=sites.find(x=>x.id===t.dataset.unarch);if(!s)return;const c=JSON.parse(JSON.stringify(s));c.archived=false;c.updatedAt=new Date().toISOString();if(!db){sites[sites.indexOf(s)]=c;}await persist(c);toast('ボードに戻しました');return;}
+  if(t.dataset.cycle){e.stopPropagation();const [sid,tid]=t.dataset.cycle.split('|');const s=sites.find(x=>x.id===sid);if(!s)return;const c=JSON.parse(JSON.stringify(s));const task=(c.tasks||[]).find(x=>x.id===tid);if(!task)return;task.status=task.status==='予定'?'作業中':task.status==='作業中'?'完了':'予定';c.updatedAt=new Date().toISOString();if(!db){sites[sites.indexOf(s)]=c;}await persist(c);toast(`${task.name}：${task.status}`);return;}
+  if(t.dataset.view){document.querySelectorAll('.tabs button').forEach(b=>b.setAttribute('aria-selected',b===t));document.querySelectorAll('.view').forEach(v=>v.classList.toggle('active',v.id==='view-'+t.dataset.view));try{localStorage.setItem(LS+'-view',t.dataset.view);}catch(_){}return;}
+  if(t.dataset.toggle){const id=t.dataset.toggle;collapsed.has(id)?collapsed.delete(id):collapsed.add(id);renderGantt();return;}
+  if(t.dataset.edit){openModal(t.dataset.edit);return;}
+  if(t.dataset.shift){shiftId=t.dataset.shift;$('#shiftDays').value=1;$('#shiftModal').classList.add('open');return;}
+  if(t.dataset.done){const s=sites.find(x=>x.id===t.dataset.done);if(!s)return;const c=JSON.parse(JSON.stringify(s));let n=0;c.tasks=(c.tasks||[]).map(x=>{if(x.status!=='完了'&&(!hasMine(c)||x.mine)&&x.end&&parse(x.end)<=TODAY){n++;return {...x,status:'完了'};}return x;});if(!n){toast('本日までに終了予定の未完了工程はありません');return;}c.updatedAt=new Date().toISOString();if(!db){sites[sites.indexOf(s)]=c;}await persist(c);toast(`${n}件を完了にしました`);}
+});
+$('#tvBtn').onclick=()=>{document.body.classList.toggle('tv');try{localStorage.setItem(LS+'-tv',document.body.classList.contains('tv')?'1':'');}catch(_){}renderGantt();};
+
+/* ---------- reader (PDF解析はページ内で完結。AIは写真・文字のときだけ) ---------- */
+let sampleFn=null,sampleCaps=null,readFiles=[],readCtl=null;
+const rfile=$('#rfile'),drop=$('#drop');
+$('#pickBtn').onclick=()=>{try{rfile.showPicker?rfile.showPicker():rfile.click();}catch(e){rfile.click();}};
+
+let pdfLib=null;
+const loadScript=(src,ms)=>new Promise((res,rej)=>{const s=document.createElement('script');s.src=src;const t=setTimeout(()=>rej(new Error('timeout:'+src)),ms||20000);s.onload=()=>{clearTimeout(t);res();};s.onerror=()=>{clearTimeout(t);rej(new Error('load:'+src));};document.head.appendChild(s);});
+function loadPdfJs(){
+  if(pdfLib)return Promise.resolve(pdfLib);
+  if(window.pdfjsLib){pdfLib=window.pdfjsLib;return Promise.resolve(pdfLib);}
+  // 本体と worker を通常の <script> で読み込む（Web Worker を使わず同一スレッドで動かす：制限環境でも止まらない）
+  return loadScript('https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js').then(()=>loadScript('https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js').catch(()=>{}))
+    .then(()=>{pdfLib=window.pdfjsLib;if(!pdfLib)throw new Error('pdfjs');pdfLib.GlobalWorkerOptions.workerSrc='https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';return pdfLib;});
+}
+const withTimeout=(p,ms,label)=>Promise.race([p,new Promise((_,rej)=>setTimeout(()=>rej(new Error(label||'timeout')),ms))]);
+/* 1ページを「文字（座標付き）＋描画済みキャンバス」にする */
+async function renderPdfPage(pdf,i){
+  const page=await pdf.getPage(i);const vp0=page.getViewport({scale:1});
+  const scale=Math.min(3,2400/Math.max(vp0.width,vp0.height));const vp=page.getViewport({scale});
+  const c=document.createElement('canvas');c.width=Math.ceil(vp.width);c.height=Math.ceil(vp.height);
+  const ctx=c.getContext('2d',{willReadFrequently:true});ctx.fillStyle='#fff';ctx.fillRect(0,0,c.width,c.height);
+  await page.render({canvasContext:ctx,viewport:vp}).promise;
+  const tc=await page.getTextContent();
+  const items=[];
+  tc.items.filter(t=>t.str&&t.str.trim()).forEach(t=>{const [x,y]=vp.convertToViewportPoint(t.transform[4],t.transform[5]);const w=t.width*scale,h=(t.height||8)*scale;
+    const toks=t.str.split(/\s+/).filter(Boolean);
+    const small=toks.length>=2&&toks.every(k=>k.length<=2);
+    const parts=small?toks:t.str.split(/\s{2,}|\t/).map(k=>k.trim()).filter(Boolean);
+    if(parts.length>=2){ // 「14 15 16 …」「月 火 水 …」や、空白で離れた複数ラベルは文字幅で位置を割る
+      const cw=w/t.str.length;let pos=0;
+      parts.forEach(k=>{const idx=t.str.indexOf(k,pos);pos=idx+k.length;items.push({str:k,x:x+idx*cw,y:y-h,w:k.length*cw,h,x2:x+(idx+k.length)*cw});});
+    }else items.push({str:t.str.trim(),x,y:y-h,w,h,x2:x+w});});
+  return {canvas:c,ctx,items,scale,w:c.width,h:c.height};
+}
+/* ガント解析：日付ヘッダー列 × 作業行 × 塗り／矢印（validate.py と同じ手順） */
+function analyzeGantt(pg,defaultYear){
+  const {ctx,items,w,h}=pg;
+  const isNum=t=>/^\d{1,2}$/.test(t.str)&&+t.str>=1&&+t.str<=31;
+  const byY={};items.filter(isNum).forEach(t=>{const k=Math.round(t.y/6);(byY[k]=byY[k]||[]).push(t);});
+  const headers=Object.values(byY).filter(a=>a.length>=8).map(a=>a.sort((p,q)=>p.x-q.x)).sort((p,q)=>p[0].y-q[0].y);
+  if(!headers.length)return null;
+  let year=null;for(const t of items){const m=t.str.match(/(20\d{2})年/);if(m){year=+m[1];break;}}
+  if(!year){for(const t of items){const m=t.str.match(/R0?(\d{1,2})[.\/]/);if(m){year=2018+(+m[1]);break;}}}
+  year=year||defaultYear;
+  const monthItems=items.filter(t=>/^\d{1,2}月$/.test(t.str)).map(t=>({m:+t.str.match(/(\d+)/)[1],x:t.x,y:t.y}));
+  const img=ctx.getImageData(0,0,w,h).data;
+  const px=(x,y)=>{const i=(y*w+x)*4;return [img[i],img[i+1],img[i+2]];};
+  const blocks=[];
+  headers.forEach((hd,hi)=>{
+    const cols=hd.map((t,i)=>{const cx=t.x+t.w/2;const nx=hd[i+1],pv=hd[i-1];const cw=nx?nx.x-t.x:(pv?t.x-pv.x:24);return {day:+t.str,cx,cw,x0:cx-cw/2,x1:cx+cw/2,month:null,wd:''};});
+    // 月の表記：「10月」のほか、日付行の直上に「月」ラベル付きで「10」「11」と数字だけ置く書式（レアリム等）にも対応
+    const bareMonths=(()=>{const cand=items.filter(t=>/^\d{1,2}$/.test(t.str)&&+t.str>=1&&+t.str<=12&&hd[0].y-t.y>3&&hd[0].y-t.y<28&&t.x>=hd[0].x-6&&t.x<=hd[hd.length-1].x2+6);
+      if(!cand.length)return [];const hasTsuki=items.some(t=>/^月$/.test(t.str)&&Math.abs(t.y-cand[0].y)<cand[0].h&&t.x<hd[0].x);
+      return hasTsuki?cand.map(t=>({m:+t.str,x:t.x,y:t.y})):[];})();
+    const above=[...monthItems.filter(m=>m.y<hd[0].y&&hd[0].y-m.y<60),...bareMonths].sort((p,q)=>p.x-q.x);
+    let month=above.length?above[0].m:null;
+    if(above.length&&above[0].x>cols[0].cx+cols[0].cw)month=((above[0].m-2)%12+12)%12+1;
+    cols.forEach((c,i)=>{
+      const lab=above.filter(m=>m.x<=c.cx);let changed=false;
+      if(lab.length&&lab[lab.length-1].m!==month){month=lab[lab.length-1].m;changed=true;}
+      if(i>0&&c.day<cols[i-1].day&&!changed)month=(month||0)%12+1;
+      c.month=month;
+    });
+    if(cols[0].month==null){const m=TODAY.getMonth()+1;cols.forEach((c,i)=>{c.month=(i>0&&c.day<cols[i-1].day)?(cols[i-1].month%12)+1:(i>0?cols[i-1].month:m);});}
+    const wds=items.filter(t=>/^[月火水木金土日]$/.test(t.str)&&t.y-hd[0].y>0&&t.y-hd[0].y<40);
+    cols.forEach(c=>{const near=wds.find(t=>Math.abs(t.x+t.w/2-c.cx)<c.cw/2);c.wd=near?near.str:'';});
+    const yTop=Math.max(hd[0].y+hd[0].h,...wds.filter(t=>t.x>=cols[0].x0-4&&t.x<=cols[cols.length-1].x1+4).map(t=>t.y+t.h)); // 曜日行（赤字の土日）はバー判定から外す
+    let yBottom=headers[hi+1]?headers[hi+1][0].y-40:h;
+    // 表の下端：最初の列境界の縦線が途切れる位置
+    const gx=Math.round(cols[0].x0);let last=yTop,yy=Math.floor(yTop);
+    while(yy<yBottom-20){let dark=0;for(let y2=yy;y2<yy+20;y2++){for(let x2=Math.max(0,gx-2);x2<Math.min(w,gx+3);x2++){const [R,G,B]=px(x2,y2);if(Math.max(R,G,B)<200){dark++;break;}}}
+      if(dark>=5)last=yy+20;else break;yy+=20;}
+    if(last>yTop+40)yBottom=Math.min(yBottom,last+10);
+    blocks.push({cols,yTop,yBottom,x0:cols[0].x0,x1:cols[cols.length-1].x1});
+  });
+  for(let bi=1;bi<blocks.length;bi++){const prev=blocks[bi-1].cols[blocks[bi-1].cols.length-1],first=blocks[bi].cols[0];let guard=0;
+    const m0=blocks[0].cols[0].month,ord=m=>(m0&&m<m0)?m+12:m; // 12月→1月をまたぐ場合は1月を13として比較
+    while(guard++<12&&(ord(first.month)<ord(prev.month)||(first.month===prev.month&&first.day<=prev.day)))blocks[bi].cols.forEach(c=>{c.month=c.month%12+1;});}
+  const tasks=[];
+  const isDateLike=t=>/\d{4}[\/年]/.test(t.str)||/^\d+$/.test(t.str)||/^[月火水木金土日]$/.test(t.str);
+  blocks.forEach(bk=>{
+    const rowsY={};
+    items.filter(t=>t.x2<bk.x0-2&&t.y>bk.yTop&&t.y<bk.yBottom&&!isDateLike(t)&&t.str.length>=2&&!/^(内容|備考|担当|内\s*容|備\s*考)$/.test(t.str)&&!/^[＊※◆・*]/.test(t.str)&&!/株式会社|建装|TEL|FAX|〒|Copyright/.test(t.str)).forEach(t=>{const k=Math.round(t.y/8);(rowsY[k]=rowsY[k]||[]).push(t);});
+    let rows=Object.values(rowsY).map(a=>({y:a[0].y,h:Math.max(...a.map(t=>t.h)),label:a.filter(t=>t.x<bk.x0*0.6).sort((p,q)=>p.x-q.x).map(t=>t.str).join('')||a[0].str,worker:a.filter(t=>t.x>=bk.x0*0.6).map(t=>t.str).join(' ')})).filter(r=>r.label).sort((p,q)=>p.y-q.y);
+    const diffs=rows.slice(1).map((r,i)=>r.y-rows[i].y).filter(v=>v>4);const rh=diffs.length?Math.min(...diffs):24;
+    let cut=rows.length;for(let i=1;i<rows.length;i++){if(rows[i].y-rows[i-1].y>rh*2.5){cut=i;break;}}rows=rows.slice(0,cut);
+    /* バー優先方式：列ごとに塗りの縦区間を検出し、その上端が属する行に1回だけ割り当てる
+       （行の下端に細いバーを置く書式で隣の行に二重計上されるのを防ぐ） */
+    const yT=Math.floor(Math.max(0,bk.yTop)),yB=Math.min(h,Math.ceil(bk.yBottom));
+    const bx0=Math.max(0,Math.floor(bk.x0)),bx1=Math.min(w,Math.ceil(bk.x1));const skipY={};
+    for(let y2=yT;y2<yB;y2++){let n=0;for(let x2=bx0;x2<bx1;x2++){const [R,G,B]=px(x2,y2);const mx=Math.max(R,G,B),mn=Math.min(R,G,B);if(mx<200||(mx-mn)>=60)n++;}if(n>=(bx1-bx0)*0.9)skipY[y2]=1;} // 表全幅の罫線
+    rows.forEach((r,i)=>{const prevB=i>0?rows[i-1].y+rows[i-1].h:bk.yTop;const nextT=i+1<rows.length?rows[i+1].y:r.y+rh;
+      r.top=Math.max(bk.yTop,(prevB+r.y)/2);r.bot=Math.min(bk.yBottom,(r.y+r.h+nextT)/2);r.on=bk.cols.map(()=>false);r.yc=r.y+r.h/2;});
+    const orphans=[];
+    bk.cols.forEach((c,ci)=>{const x0=Math.max(0,Math.floor(c.x0+c.cw*0.15)),x1=Math.min(w,Math.ceil(c.x1-c.cw*0.15));if(x1<=x0)return;
+      let a=-1;const flush=b=>{if(a<0)return;if(b-a>=2){const need=Math.min(rh*0.35,(b-a)*0.6);let hitAny=false; // 縦区間と行の重なりで判定（隣接行のバーが連結して1本に見える場合は両方の行に付ける）
+        rows.forEach(r=>{const ov=Math.min(b,r.bot)-Math.max(a,r.top);if(ov>=need){r.on[ci]=true;hitAny=true;}});if(!hitAny)orphans.push({ci,a,b});}a=-1;};
+      for(let y2=yT;y2<yB;y2++){let onLine=false;
+        if(!skipY[y2]){let run=0,mr=0;for(let x2=x0;x2<x1;x2++){const [R,G,B]=px(x2,y2);const mx=Math.max(R,G,B),mn=Math.min(R,G,B);if(mx<175||((mx-mn)>=60&&mn<170)){run++;if(run>mr)mr=run;}else run=0;}onLine=mr/(x1-x0)>=0.8;} // 列幅の8割以上を連続で塗っている行だけ（表内の文字「予備日」等を誤検出しない）
+        if(onLine){if(a<0)a=y2;}else flush(y2);}
+      flush(yB);});
+    // 左に項目名がない行のバー（「お引渡し」など表内に文字だけある行）：表内の文字を項目名にして行を起こす
+    orphans.forEach(o=>{const yc=(o.a+o.b)/2;let r=rows.find(r=>r.pseudo&&Math.abs(r.yc-yc)<rh*0.5);
+      if(!r){const lab=items.filter(t=>t.x>=bk.x0-4&&t.x<bk.x1+4&&Math.abs((t.y+t.h/2)-yc)<rh*0.8&&!isDateLike(t)&&!/^\d{1,2}月$/.test(t.str)&&t.str.length>=2&&!/^[※◆＊]/.test(t.str)).sort((p,q)=>p.x-q.x)[0];
+        if(!lab)return;r={y:yc-rh/2,h:rh,label:lab.str.replace(/\s+/g,''),worker:'',on:bk.cols.map(()=>false),yc,pseudo:true};rows.push(r);}
+      r.on[o.ci]=true;});
+    const valid=rows.filter(r=>r.on);
+    if(valid.length>=3){for(let ci=0;ci<bk.cols.length;ci++){const cnt=valid.filter(r=>r.on[ci]).length;if(cnt>=valid.length*0.8)valid.forEach(r=>{r.on[ci]=false;});}}
+    valid.forEach(r=>{
+      const on=r.on,yc=r.yc;let i=0;
+      while(i<on.length){
+        if(!on[i]){i++;continue;}
+        let j=i;while(j+1<on.length&&on[j+1])j++;
+        let k=j;while(k+2<on.length&&!on[k+1]&&on[k+2]&&(bk.cols[k+1].wd==='日'||bk.cols[k+1].wd==='')){k+=2;while(k+1<on.length&&on[k+1])k++;}j=k;
+        const labs0=items.filter(t=>t.x>=bk.cols[i].x0-4&&t.x<bk.cols[j].x1+4&&Math.abs((t.y+t.h/2)-yc)<rh*0.6&&!isDateLike(t)&&t.str.length>=2&&!/^[※◆＊]/.test(t.str)).sort((p,q)=>p.x-q.x);
+        const labs=[];labs0.forEach(t=>{const L=labs[labs.length-1];if(L&&t.x-L.x2<t.h*1.0&&Math.abs(t.y-L.y)<t.h)labs[labs.length-1]={...L,str:L.str+' '+t.str,x2:t.x2};else labs.push({...t});});
+        const subs=[];{let a=i;while(a<=j){if(!on[a]){a++;continue;}let b2=a;while(b2+1<=j&&on[b2+1])b2++;subs.push([a,b2]);a=b2+1;}}
+        const colOf=x=>{for(let ci=i;ci<=j;ci++){if(bk.cols[ci].x0-2<=x&&x<bk.cols[ci].x1)return ci;}return i;};
+        const segs=[];
+        if(labs.length>=2){const starts=labs.map(t=>Math.max(i,colOf(t.x)));starts.forEach((st,si)=>{let en=si+1<starts.length?starts[si+1]-1:j;while(en>st&&!on[en])en--;segs.push([st,en,labs[si].str.replace(/\s+/g,'')]);});}
+        else if(labs.length===1&&subs.length>=2&&labs[0].str.trim().split(/\s+/).length===subs.length){labs[0].str.trim().split(/\s+/).forEach((nm,si)=>segs.push([subs[si][0],subs[si][1],nm]));}
+        else segs.push([i,j,labs.length?labs[0].str.replace(/\s+/g,''):r.label]);
+        const note=items.filter(t=>t.x>=bk.cols[i].x0-40&&t.x<bk.cols[j].x1+260&&Math.abs((t.y+t.h/2)-yc)<rh*0.9&&/^[※◆]/.test(t.str)).map(t=>t.str).join(' ');
+        segs.forEach(([st,en,name])=>{const c0=bk.cols[st],c1=bk.cols[en];const m0=blocks[0].cols[0].month;const yOf=c=>(m0&&c.month<m0)?year+1:year; // 12月→1月で年をまたぐ
+          let start=dateOf(yOf(c0),c0.month,c0.day),end=dateOf(yOf(c1),c1.month,c1.day),worker=r.worker||'';
+          // 行の右側に「8/17 8/19」のような開始・終了日の文字があれば、それを優先（大東建託書式など）
+          const dm=[...worker.matchAll(/(?:(20\d{2})[\/年.])?(\d{1,2})[\/月.](\d{1,2})日?/g)];
+          if(dm.length>=2){const y0=dm[0][1]?+dm[0][1]:year;let y1=dm[1][1]?+dm[1][1]:y0;const d0=dateOf(y0,+dm[0][2],+dm[0][3]);let d1=dateOf(y1,+dm[1][2],+dm[1][3]);if(d1<d0){y1++;d1=dateOf(y1,+dm[1][2],+dm[1][3]);}start=d0;end=d1;worker=worker.replace(/(?:20\d{2}[\/年.])?\d{1,2}[\/月.]\d{1,2}日?/g,'').replace(/[〜~\-－ー]/g,' ').replace(/\s+/g,' ').trim();}
+          else if(dm.length===1){const y0=dm[0][1]?+dm[0][1]:year;start=end=dateOf(y0,+dm[0][2],+dm[0][3]);worker=worker.replace(/(?:20\d{2}[\/年.])?\d{1,2}[\/月.]\d{1,2}日?/g,'').replace(/\s+/g,' ').trim();}
+          tasks.push({name,start,end,worker,note});});
+        i=j+1;
+      }
+    });
+  });
+  const HDR=/^(担当|責任者|作成者|開始日|完了予定日|着工予定日|完工予定日|作成日|物件名|現場住所|工事内容|顧客名|プロジェクト名)$/;
+  const norm=x=>x.replace(/[\s　]/g,'');
+  // 同じ行で近接する文字列を句にまとめる（「顧 客 名」→「顧客名」）
+  const ph=[];[...items].sort((p,q)=>(p.y-q.y)||(p.x-q.x)).forEach(t=>{const L=ph[ph.length-1];if(L&&Math.abs(L.y-t.y)<t.h*0.5&&t.x-L.x2<t.h*1.5&&t.x>=L.x2-2){L.str+=t.str;L.x2=t.x2;L.w=L.x2-L.x;}else ph.push({...t});});
+  const val=re=>{const t=ph.find(t=>re.test(norm(t.str)))||items.find(t=>re.test(norm(t.str)));if(!t)return '';
+    let same=ph.filter(u=>Math.abs(u.y-t.y)<t.h&&u.x>t.x2-1&&u.x-t.x2<t.h*25&&!HDR.test(norm(u.str))).sort((p,q)=>p.x-q.x)[0];
+    if(!same)same=ph.filter(u=>u.y>t.y+t.h*0.8&&u.y<t.y+t.h*3&&u.x<t.x2+t.h*2&&u.x2>t.x-t.h*2&&!HDR.test(norm(u.str))).sort((p,q)=>Math.abs((p.x+p.x2)/2-(t.x+t.x2)/2)-Math.abs((q.x+q.x2)/2-(t.x+t.x2)/2))[0];
+    return same&&!/^[\d\s]{6,}$/.test(same.str)?same.str:'';};
+  const dateVal=(re,last)=>{const v=val(re);const all=[...v.matchAll(/(20\d{2})[\/年.](\d{1,2})[\/月.](\d{1,2})/g)];if(!all.length)return '';const m=last?all[all.length-1]:all[0];return dateOf(+m[1],+m[2],+m[3]);};
+  const info={
+    customer:val(/^(顧客名|お客様名|お施主様名|施主名?)$/),contractor:val(/^(施工業者|施工会社|協力業者)$/),
+    name:val(/^物件名$/)||val(/^顧客名$/)||(items.find(t=>/様/.test(t.str)&&t.str.length<30&&!/^[※◆＊]|工程表/.test(t.str))||{}).str||'',
+    address:val(/^現場住所$/),work:val(/^(工事内容|プロジェクト名)$/),manager:val(/^(責任者|担当)$/),
+    start:dateVal(/^(着工予定日|開始日)$/),end:dateVal(/^(完工予定日|完了予定日)$/,true),
+    note:items.filter(t=>/^[※◆]/.test(t.str)&&!/作業時間|洗濯物|日曜日|電気・水道|電気及び|トイレ|足場工事に伴い|完了撮影|マークは/.test(t.str)).map(t=>t.str).join(' ')
+  };
+  // 同名・同期間の重複（文字の日付から復元した分割バー）をまとめる
+  for(let a=0;a<tasks.length;a++){for(let b=a+1;b<tasks.length;b++){if(tasks[b].name===tasks[a].name&&tasks[b].start===tasks[a].start&&tasks[b].end===tasks[a].end){tasks[a].note=[tasks[a].note,tasks[b].note].filter(Boolean).join(' ');tasks.splice(b,1);b--;}}}
+  // 月ブロックをまたいで続く同名作業を1本にまとめる
+  for(let a=0;a<tasks.length;a++){for(let b=a+1;b<tasks.length;b++){if(tasks[b].name===tasks[a].name&&tasks[b].start===addDays(tasks[a].end,1)){tasks[a].end=tasks[b].end;tasks[a].note=[tasks[a].note,tasks[b].note].filter(Boolean).join(' ');tasks.splice(b,1);b--;}}}
+  // タイトル行「木野様邸　屋根・外壁・外構工事 工程表」→ 物件名＋工事内容
+  if(!info.name){const t=ph.find(t=>/様/.test(t.str)&&/工程表/.test(t.str)&&t.str.length<40);if(t){const s=t.str.replace(/[\s　]*工程表.*$/,'').trim();const m=s.match(/^(.*?様(?:邸)?)[\s　]*(.*)$/);if(m){info.name=m[1];if(!info.work&&m[2])info.work=m[2].trim();}}}
+  if(!info.contractor){const t=items.find(t=>/(株式会社|有限会社|合同会社)/.test(t.str)&&!/河建/.test(t.str)&&t.str.length<20&&t.y<h*0.15);if(t)info.contractor=t.str.replace(/[\s　]+/g,' ').trim();}
+  if(/^.{0,2}様$/.test(info.name))info.name='';
+  if(info.name&&!/様/.test(info.name))info.name+='様邸';
+  if(!info.customer&&info.name){const m=info.name.match(/^(.+?)\s*様/);if(m)info.customer=m[1].replace(/邸$/,'');}
+  const m0c=blocks.length?blocks[0].cols[0].month:null;const yOfC=c=>(m0c&&c.month<m0c)?year+1:year;
+  const columns=blocks.map(bk=>{const c=bk.cols;const a=c[0],b=c[c.length-1];return {start:dateOf(yOfC(a),a.month,a.day),end:dateOf(yOfC(b),b.month,b.day),count:c.length};});
+  return {info,tasks,year,columns};
+}
+window.__analyzePdf=(...a)=>analyzePdf(...a);window.__analyzeGantt=(...a)=>analyzeGantt(...a);
+function dateOf(y,m,d){return `${y}-${String(m).padStart(2,'0')}-${String(d).padStart(2,'0')}`;}
+async function analyzePdf(file,progress){
+  const say=m=>{if(progress)progress(m);};
+  say('PDF読み取り部品を準備中…');
+  const lib=await withTimeout(loadPdfJs(),25000,'PDF読み取り部品を読み込めませんでした（通信環境をご確認ください）');
+  say('PDFを開いています…');
+  const pdf=await withTimeout(lib.getDocument({data:await file.arrayBuffer()}).promise,30000,'PDFを開けませんでした（破損または保護されたPDFの可能性）');
+  const out={info:{},tasks:[],pages:0,images:[]};
+  for(let i=1;i<=Math.min(pdf.numPages,4);i++){
+    say(`${i}ページ目を解析中…（${Math.min(pdf.numPages,4)}ページ中）`);
+    const pg=await withTimeout(renderPdfPage(pdf,i),40000,'ページの描画に時間がかかりすぎました');out.pages++;
+    const r=analyzeGantt(pg,TODAY.getFullYear());
+    if(r){Object.keys(r.info).forEach(k=>{if(r.info[k]&&!out.info[k])out.info[k]=r.info[k];});out.tasks.push(...r.tasks);out.columns=(out.columns||[]).concat(r.columns||[]);}
+    if(!pg.items.length){const blob=await new Promise(res=>pg.canvas.toBlob(res,'image/png'));out.images.push(new File([blob],`${file.name}-p${i}.png`,{type:'image/png'}));}
+    // AI精密読み取り用：ページ画像（JPEG）と文字（座標つき）を保持
+    try{const mx=2400,sc=Math.min(1,mx/Math.max(pg.w,pg.h));const c2=document.createElement('canvas');c2.width=Math.round(pg.w*sc);c2.height=Math.round(pg.h*sc);c2.getContext('2d').drawImage(pg.canvas,0,0,c2.width,c2.height);
+      const txt=pg.items.map(t=>`${Math.round(t.x/pg.scale)},${Math.round(t.y/pg.scale)}:${t.str}`).join('\n');
+      out.aiPages=out.aiPages||[];out.aiPages.push({image:c2.toDataURL('image/jpeg',0.9),text:txt.slice(0,20000)});}catch(_){}
+  }
+  return out;
+}
+/* サーバー（Claude API）による精密読み取り。時間はかかるが書式に依存しない */
+let aiServer=null; // null=未確認 / true / false
+async function aiServerReady(){if(aiServer!==null)return aiServer;try{aiServer=!!(await withTimeout(gs('apiAiAvailable'),15000,'timeout'));}catch(_){aiServer=false;}return aiServer;}
+async function aiReadPages(pages,local,say){
+  const hint={today:fmt(TODAY),localTasks:(local.tasks||[]).slice(0,60).map(t=>({name:t.name,start:t.start,end:t.end})),localInfo:local.info||{},localColumns:(local.columns||[]).map(c=>({start:c.start,end:c.end,count:c.count}))};
+  say('AIが精密に読み取り中…（1〜2分かかることがあります。そのままお待ちください）');
+  const r=await withTimeout(gs('apiReadPages',pages.slice(0,3),hint),330000,'AI読み取りがタイムアウトしました');
+  if(!r||!r.ok)throw new Error(r&&r.error||'AI読み取りに失敗しました');
+  return r.data;
+}
+function setFiles(fs){
+  readFiles=[...fs].filter(f=>/^image\//.test(f.type)||/pdf$/i.test(f.type)||/\.pdf$/i.test(f.name));
+  const old=$('#reader .thumbs');if(old)old.remove();
+  if(readFiles.length){const t=document.createElement('div');t.className='thumbs';readFiles.forEach(f=>{if(/^image\//.test(f.type)){const i=document.createElement('img');i.src=URL.createObjectURL(f);i.alt=f.name;t.appendChild(i);}else{const s=document.createElement('span');s.className='chip';s.style.cssText='background:var(--surface);border:1px solid var(--line)';s.textContent='📄 '+f.name;t.appendChild(s);}});$('#reader .rbody').appendChild(t);}
+  $('#dropText').textContent=readFiles.length?`${readFiles.length}件を選択中 → 次に「▶ 読み取る」を押してください`:'パソコンならここにドラッグ＆ドロップ、スマホなら上のボタンからカメラ／写真を選べます';
+}
+rfile.onchange=()=>{setFiles(rfile.files);if(readFiles.length)toast(`${readFiles.length}件のファイルを選びました`);};
+['dragenter','dragover'].forEach(ev=>drop.addEventListener(ev,e=>{e.preventDefault();drop.classList.add('over');}));
+['dragleave','drop'].forEach(ev=>drop.addEventListener(ev,e=>{e.preventDefault();drop.classList.remove('over');}));
+drop.addEventListener('drop',e=>setFiles(e.dataTransfer.files));
+document.addEventListener('paste',e=>{if(!$('#modal').classList.contains('open'))return;const fs=[...(e.clipboardData?.files||[])].filter(f=>/^image\//.test(f.type)||/pdf$/i.test(f.type));if(fs.length){e.preventDefault();setFiles(fs);}});
+function readPrompt(text){
+  return `あなたは建設会社（外壁塗装・リフォーム）の事務担当です。渡された工程表（画像の場合はガントチャート形式の「工程表」、文字の場合はメモや表）を読み取り、次のJSONだけを返してください。説明文は不要です。
+{"name":"物件名（例：山田様邸）","customer":"顧客名（お施主様）","address":"現場住所","work":"工事内容","manager":"担当者名","start":"YYYY-MM-DD 着工予定日","end":"YYYY-MM-DD 完工予定日","note":"注記（※や◆の依頼事項・注意事項。無ければ空文字）","tasks":[{"name":"作業名","start":"YYYY-MM-DD","end":"YYYY-MM-DD","worker":"職人・業者名（不明なら空文字）","status":"予定"}]}
+ルール：
+- 今日は ${fmt(TODAY)} です。年の記載が無い日付は、今日に近い将来（または直近）の年と解釈してください。
+- ガントチャートでは横軸が日付、縦軸が作業名です。矢印やバーの開始列・終了列を読んで日付にしてください。●印は単日作業（start=end）です。
+- 土日の背景色は無視してください。会社名・住所・電話（河建株式会社のブロック）は物件情報ではないので name/address には入れないでください。
+- 作業は工程表の上から順に並べてください。読み取れない項目は空文字にし、推測で作らないでください。
+- 状態は原則「予定」。今日より前に終了している作業は「完了」にしてください。
+${text?'\n【貼り付けられた文字】\n'+text.slice(0,6000):''}`;
+}
+async function shrinkImage(file,maxPx,q){
+  const bmp=await createImageBitmap(file).catch(()=>null);if(!bmp)return null;
+  const sc=Math.min(1,maxPx/Math.max(bmp.width,bmp.height));const c=document.createElement('canvas');c.width=Math.round(bmp.width*sc);c.height=Math.round(bmp.height*sc);
+  c.getContext('2d').drawImage(bmp,0,0,c.width,c.height);return c.toDataURL('image/jpeg',q);
+}
+async function sendToInbox(imgs,text){
+  let n=0;
+  for(const f of imgs.slice(0,6)){
+    let data=await shrinkImage(f,1400,0.78);if(!data)continue;
+    if(data.length>230000)data=await shrinkImage(f,1100,0.7);if(data.length>230000)data=await shrinkImage(f,900,0.62);
+    if(data.length>240000){toast('画像が大きすぎます：'+f.name);continue;}
+    $('#readStatus').textContent=`受付箱に送信中… ${f.name}`;
+    try{await withTimeout(db.collection('inbox').add({createdAt:new Date().toISOString(),status:'pending',filename:f.name,note:text||'',image:data,by:''}),30000,'送信がタイムアウトしました');n++;}catch(e){toast('受付箱に送れませんでした：'+(e&&e.message||e));}
+  }
+  if(!imgs.length&&text){try{await db.collection('inbox').add({createdAt:new Date().toISOString(),status:'pending',filename:'',note:text,image:'',by:''});n++;}catch(e){}}
+  return n;
+}
+$('#readBtn').onclick=async()=>{
+  const text=$('#rtext').value.trim();
+  if(!text&&!readFiles.length){toast('ファイルを選ぶか、文字を貼り付けてください');$('#readStatus').textContent='先に「ファイルを選択」でPDF・写真を選んでください。';return;}
+  readCtl=new AbortController();
+  $('#readBtn').disabled=true;$('#readStop').hidden=false;
+  try{
+    const pdfs=readFiles.filter(f=>/pdf$/i.test(f.type)||/\.pdf$/i.test(f.name));
+    const imgs=readFiles.filter(f=>/^image\//.test(f.type));
+    let merged={name:'',customer:'',contractor:'',address:'',work:'',manager:'',start:'',end:'',note:'',tasks:[]};let got=false;
+    // 1) PDF：ページ内で解析（AI不要）
+    for(const f of pdfs){
+      $('#readStatus').textContent=`PDFを解析中… ${f.name}`;
+      const r=await analyzePdf(f,m=>{$('#readStatus').textContent=`${f.name}：${m}`;});
+      ['name','customer','contractor','address','work','manager','start','end','note'].forEach(k=>{if(r.info[k]&&!merged[k])merged[k]=r.info[k];});
+      let used=false;
+      if(db&&r.aiPages&&r.aiPages.length&&await aiServerReady()){
+        try{const ai=await aiReadPages(r.aiPages,r,m=>{$('#readStatus').textContent=`${f.name}：${m}`;});
+          if(ai&&Array.isArray(ai.tasks)&&ai.tasks.length){
+            ['name','customer','contractor','address','work','manager','start','end','note'].forEach(k=>{if(ai[k]&&!merged[k])merged[k]=String(ai[k]);});
+            merged.tasks.push(...ai.tasks);got=true;used=true;merged._ai=true;
+            if(ai.warning)toast('AIの注記：'+String(ai.warning).slice(0,120));}
+        }catch(e){toast('AI精密読み取りができませんでした（簡易読み取りの結果を表示します）：'+(e&&e.message||e).slice(0,80));}
+      }
+      if(!used){merged.tasks.push(...r.tasks);if(r.tasks.length)got=true;}
+      if(!used&&!r.tasks.length&&r.images.length)imgs.push(...r.images); // 文字の無いスキャンPDF→写真扱い
+    }
+    // 2) 写真・文字：AIが使えるときだけ
+    if(imgs.length||text){
+      if(!sampleFn||(imgs.length&&!sampleCaps?.images)){
+        // この端末ではAIに直接渡せない → 共有の「受付箱」に入れて、担当AI（Claude）が後で読み取って登録する
+        if(db){const n=await sendToInbox(imgs,text);
+          $('#readStatus').textContent=n?`写真${n}枚を受付箱に送りました。まもなく自動で読み取って現場に登録されます（通常1時間以内。急ぐ場合はチャットで「受付箱を処理して」と伝えてください）。この画面は閉じて構いません。`:'受付箱に送れませんでした。';
+          if(n){setTimeout(closeModal,3500);}}
+        else{$('#readStatus').textContent='この端末では写真を読み取れません。共有モード（claude.ai にサインイン）で開くと受付箱に送れます。';}
+      }
+      else{
+        $('#readStatus').textContent='AIで読み取り中…（10〜40秒ほど）';
+        const r=await sampleFn.json(readPrompt(text),{images:imgs.length?imgs.slice(0,sampleCaps?.images?.maxCount||4):undefined,signal:readCtl.signal,modelTier:'default',cache:false});
+        if(r&&typeof r==='object'){['name','customer','address','work','manager','start','end','note'].forEach(k=>{if(r[k]&&!merged[k])merged[k]=String(r[k]);});if(Array.isArray(r.tasks)){merged.tasks.push(...r.tasks);got=true;}}
+        $('#readStatus').textContent='反映しました。内容を確認してから保存してください。';
+      }
+    }else if(got){$('#readStatus').textContent=merged._ai?'AIが精密に読み取りました。日付・作業名を確認してから保存してください。':'PDFの内容を反映しました（簡易読み取り）。日付・作業名を確認してから保存してください。';}
+    else{$('#readStatus').textContent='この PDF からは工程を読み取れませんでした（日付の並んだ表が見つかりません）。スクリーンショットを写真として入れるか、文字で貼り付けてください。';}
+    if(got)applyRead(merged);
+  }catch(e){
+    const m={cancelled:'中止しました',not_granted:'AIの利用が許可されていません',rate_limited:'利用が集中しています。少し待ってから再度お試しください',image_rejected:'この画像は読み込めませんでした（JPEG/PNGで20MB以下）',invalid_json:'うまく読み取れませんでした。画像を明るく撮り直すか、文字で貼り付けてください',refused:'この内容は読み取れませんでした'}[e&&e.code]||('読み取りに失敗しました：'+(e&&e.message||e));
+    $('#readStatus').textContent=m;
+  }finally{$('#readBtn').disabled=false;$('#readStop').hidden=true;readCtl=null;}
+};
+$('#readStop').onclick=()=>readCtl?.abort();
+function applyRead(r){
+  if(!r||typeof r!=='object')return;
+  const set=(id,v)=>{if(v&&String(v).trim())$(id).value=String(v).trim();};
+  const dOk=v=>/^\d{4}-\d{2}-\d{2}$/.test(v||'');
+  set('#f-name',r.name);set('#f-customer',r.customer);set('#f-contractor',r.contractor);set('#f-address',r.address);set('#f-work',r.work);set('#f-manager',r.manager);set('#f-note',r.note);
+  if(dOk(r.start))$('#f-start').value=r.start;if(dOk(r.end))$('#f-end').value=r.end;
+  const ts=Array.isArray(r.tasks)?r.tasks.filter(t=>t&&t.name&&dOk(t.start)):[];
+  if(ts.length){const rows=$('#taskRows');rows.innerHTML='';ts.forEach(t=>rows.appendChild(taskRow({name:String(t.name),start:t.start,end:dOk(t.end)?t.end:t.start,worker:t.worker?String(t.worker):'',status:STATUS.includes(t.status)?t.status:(parse(dOk(t.end)?t.end:t.start)<TODAY?'完了':'予定')})));
+    if(!dOk(r.start))$('#f-start').value=ts.map(t=>t.start).sort()[0];
+    if(!dOk(r.end))$('#f-end').value=ts.map(t=>dOk(t.end)?t.end:t.start).sort().slice(-1)[0];}
+  toast(`${ts.length}件の工程を読み取りました`);
+}
+
+
+/* ---------- 工程表PDF（河建書式）をページ内で生成 ---------- */
+let downloadsFn=null;
+const CO={name:'河建株式会社',zip:'〒470-2102',addr:'愛知県知多郡東浦町大字緒川字ミツ池一区14番地80',tel:'TEL 0562-85-3650　FAX 0562-85-3670',person:'河内　拓哉'};
+const KCOLOR={ashiba:'#222',senjo:'#222',seal:'#2C6FBF',gaiheki:'#E0741F',yane:'#2E9A5A',naiso:'#8A55B8',other:'#222'};
+function svgEsc(x){return String(x??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));}
+function fitText(txt,maxW,fs,minFs){ // CJK想定：1文字≈fs幅。収まるまで縮小し、それでも無理なら末尾省略
+  txt=String(txt||'');const est=f=>[...txt].reduce((a,c)=>a+(/[\x20-\x7E]/.test(c)?0.55:1)*f,0);
+  let f=fs;while(est(f)>maxW&&f>minFs)f-=0.5;
+  if(est(f)>maxW){const e2=t=>[...t].reduce((a,c)=>a+(/[\x20-\x7E]/.test(c)?0.55:1)*f,0);let t=txt;while(t.length>1&&e2(t+'…')>maxW)t=t.slice(0,-1);txt=t+'…';}
+  return {txt,fs:f};
+}
+function buildScheduleSvgPages(site){
+  // 河建「工事工程表」書式（井上鋼材様版をモデル）：上部情報表＋タイトル＋日曜網掛けの矢印ガント
+  const W=1190,H=842,M=44;const F='"Noto Sans JP","Hiragino Sans","Yu Gothic","Meiryo",sans-serif';
+  const INK='#111',MUTED='#666',LN='#333',GRID='#C8CDD2',HEADBG='#DCE6F1',SUN='#C9DBEE',ARROW='#3B1F8F';
+  const raw=(site.tasks||[]).filter(t=>t.name&&t.start);
+  // 同名の工程は1行にまとめる（複数矢印）
+  const rows=[];raw.forEach(t=>{const r=rows.find(x=>x.name===t.name);const seg={a:parse(t.start),b:parse(t.end||t.start),note:t.note||''};if(r)r.segs.push(seg);else rows.push({name:t.name,worker:t.worker||'',segs:[seg]});});
+  rows.forEach(r=>r.segs.sort((p,q)=>p.a-q.a));
+  let d0=parse(site.start),d1=parse(site.end);
+  rows.forEach(r=>r.segs.forEach(g=>{if(!d0||g.a<d0)d0=g.a;if(!d1||g.b>d1)d1=g.b;}));
+  const days=[];for(let d=new Date(d0);d<=d1;d=new Date(d.getTime()+DAY))days.push(d);
+  const blocks=[];if(days.length<=45)blocks.push(days);else{let cur=[];days.forEach(d=>{if(cur.length&&d.getDate()===1){blocks.push(cur);cur=[];}cur.push(d);});if(cur.length)blocks.push(cur);}
+  const maxCols=Math.max(...blocks.map(b=>b.length));
+  const jdate=d=>d?`${d.getFullYear()}年${d.getMonth()+1}月${d.getDate()}日`:'';
+  const md=d=>`${d.getMonth()+1}/${d.getDate()}`;
+  const rangeText=r=>{// 7/17~7/18、8/3~4 の形式
+    let lastM=null;return r.segs.map(g=>{const sa=(g.a.getMonth()===lastM)?String(g.a.getDate()):md(g.a);lastM=g.a.getMonth();
+      if(g.a.getTime()===g.b.getTime())return sa;const sb=(g.b.getMonth()===g.a.getMonth())?String(g.b.getDate()):md(g.b);lastM=g.b.getMonth();return `${sa}~${sb}`;}).join('、');};
+  const out=[];
+  const T=(x,y,t,o={})=>{const f=fitText(t,o.maxW||9999,o.fs||12,o.min||8);out.push({k:'text',x,y,t:f.txt,fs:f.fs,bold:!!o.bold,fill:o.fill||INK,anchor:o.anchor||'start',ls:o.ls||0});};
+  const R=(x,y,w,h,fill,stroke,sw)=>out.push({k:'rect',x,y,w,h,fill:fill||null,stroke:stroke||null,sw:sw||1});
+  const L=(x1,y1,x2,y2,stroke,sw)=>out.push({k:'line',x1,y1,x2,y2,stroke,sw:sw||1});
+  const P=(pts,fill)=>out.push({k:'poly',pts,fill});
+  const IMG=(src,x,y,w,h)=>out.push({k:'img',src,x,y,w,h});
+  R(0,0,W,H,'#fff');
+  // ── 上部情報表（左）
+  let y=M;const iw=250,ih=26;
+  const cellH=(x,yy,t)=>{R(x,yy,iw,ih,HEADBG,LN,0.8);T(x+iw/2,yy+ih/2+4.5,t,{anchor:'middle',bold:1,fs:12});};
+  const cellV=(x,yy,t)=>{R(x,yy,iw,ih,'#fff',LN,0.8);T(x+iw/2,yy+ih/2+4.5,t,{anchor:'middle',fs:12,maxW:iw-12});};
+  cellH(M,y,'お施主様名');cellH(M+iw,y,'工事内容');
+  cellV(M,y+ih,site.customer||site.name||'');cellV(M+iw,y+ih,site.work||'');
+  cellH(M,y+ih*2,'着工予定日');cellH(M+iw,y+ih*2,'完了予定日');
+  cellV(M,y+ih*3,jdate(parse(site.start)));cellV(M+iw,y+ih*3,jdate(parse(site.end)));
+  cellH(M,y+ih*4,'施工業者');cellH(M+iw,y+ih*4,'担当者');
+  cellV(M,y+ih*5,site.contractor||CO.name);cellV(M+iw,y+ih*5,site.manager||CO.person);
+  if(site.name&&site.customer&&site.name!==site.customer)T(M,y+ih*6+16,`物件名：${site.name}${site.address?'　'+site.address:''}`,{fs:10,fill:MUTED,maxW:iw*2});
+  // ── 会社ロゴブロック（右上）：実ロゴ画像
+  {const lw=190,lh=lw*258/438;IMG(LOGO,W-M-lw,M,lw,lh);}
+  // ── タイトル
+  y=M+ih*6+40;
+  T(W/2,y,'工 事 工 程 表',{fs:24,bold:1,anchor:'middle',ls:4});
+  y+=30;
+  // ── ガント
+  const LW=250,gx0=M,gx1=W-M;const cw=(gx1-gx0-LW)/maxCols;
+  const dayH=18,wdH=18,moH=16;const foot=40;
+  const availH=H-y-foot-blocks.length*(moH+dayH+wdH+14);
+  const rh=Math.max(28,Math.min(54,Math.floor(availH/(Math.max(1,rows.length)*blocks.length))));
+  blocks.forEach(bd=>{
+    const n=bd.length;const gw=LW+n*cw;const tableH=dayH+wdH+rows.length*rh;
+    // 月ラベル
+    bd.forEach((d,i)=>{if(i===0||d.getDate()===1)T(gx0+LW+i*cw+2,y+moH-4,`${d.getMonth()+1}月`,{fs:11,bold:1});});
+    y+=moH;
+    // 日曜網掛け（ヘッダーから最下段まで）
+    bd.forEach((d,i)=>{if(d.getDay()===0)R(gx0+LW+i*cw,y,cw,tableH,SUN);});
+    // ヘッダー
+    R(gx0,y+dayH,LW,wdH,'#fff');T(gx0+LW/2,y+dayH+wdH/2+4,'作業内容及び工事期間',{anchor:'middle',fs:10,fill:MUTED});
+    bd.forEach((d,i)=>{const x=gx0+LW+i*cw;const sun=d.getDay()===0;
+      T(x+cw/2,y+dayH-5,String(d.getDate()),{anchor:'middle',fs:10,fill:sun?'#C0392B':INK});
+      T(x+cw/2,y+dayH+wdH-5,WD[d.getDay()],{anchor:'middle',fs:10,fill:sun?'#C0392B':MUTED});});
+    // 格子
+    for(let i=0;i<=n;i++){const x=gx0+LW+i*cw;L(x,y,x,y+tableH,GRID,0.7);}
+    L(gx0,y+dayH,gx0+gw,y+dayH,GRID,0.7);
+    for(let r=0;r<=rows.length;r++){const yy=y+dayH+wdH+r*rh;L(gx0,yy,gx0+gw,yy,r===0?LN:GRID,r===0?1:0.7);}
+    R(gx0,y+dayH,gw,tableH-dayH,null,LN,1);L(gx0+LW,y,gx0+LW,y+tableH,LN,1);
+    // 行
+    const t0=bd[0].getTime(),t1=bd[n-1].getTime();
+    rows.forEach((r,ri)=>{const yy=y+dayH+wdH+ri*rh;const hasNote=r.segs.some(g=>g.note);const yc=yy+rh/2+(hasNote?4:0);
+      T(gx0+6,yy+rh*0.42,r.name,{fs:Math.min(13,rh*0.32),maxW:LW-14-(r.worker?60:0),min:9});
+      if(r.worker)T(gx0+LW-6,yy+rh*0.42,r.worker,{fs:9,fill:MUTED,anchor:'end',maxW:58});
+      T(gx0+6,yy+rh*0.42+14,rangeText(r),{fs:9.5,fill:MUTED,maxW:LW-14});
+      r.segs.forEach(g=>{const a=g.a.getTime(),b=g.b.getTime();if(b<t0||a>t1)return;
+        const ia=Math.max(0,Math.round((a-t0)/DAY)),ib=Math.min(n-1,Math.round((b-t0)/DAY));
+        const x1=gx0+LW+ia*cw+(a<t0?0:cw*0.12),x2=gx0+LW+(ib+1)*cw-cw*0.12;
+        const sw=Math.max(3,Math.min(4.5,rh*0.09)),ah=sw*2.6;
+        if(b>t1){L(x1,yc,gx0+LW+n*cw,yc,ARROW,sw);return;}
+        const x2l=Math.max(x1,x2-ah*1.2);
+        L(x1,yc,x2l,yc,ARROW,sw);P([[x2,yc],[x2-ah*1.3,yc-ah*0.7],[x2-ah*1.3,yc+ah*0.7]],ARROW);
+        if(g.note&&a>=t0)T(gx0+LW+ia*cw+2,yy+10,g.note,{fs:8.5,fill:'#C0392B',maxW:(n-ia)*cw-4});
+      });
+    });
+    y+=tableH+14;
+  });
+  // ── 脚注
+  const notes=['※天候、その他事情により工程が前後する場合がございます。'];
+  if(site.note)notes.push(site.note);
+  notes.forEach((nt,i)=>T(gx0+6,y+8+i*14,nt,{fs:10,maxW:W-M*2-12}));
+  return [out];
+}
+const PDF_FONT='"BIZ UDPGothic","BIZ UDPゴシック","Yu Gothic","游ゴシック","Meiryo","Noto Sans JP",sans-serif';
+const LOGO='data:image/jpeg;base64,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'; // 河建ロゴ（工程表PDFから抽出。高解像度版に差し替え可）
+async function cmdsToJpeg(cmds,scale){
+  const W=1190,H=842;const c=document.createElement('canvas');c.width=W*scale;c.height=H*scale;const g=c.getContext('2d');g.scale(scale,scale);
+  try{await document.fonts.load('700 16px "BIZ UDPGothic"');await document.fonts.load('400 16px "BIZ UDPGothic"');}catch(_){}
+  const imgs={};for(const o of cmds){if(o.k==='img'&&!imgs[o.src]){imgs[o.src]=await new Promise(res=>{const im=new Image();im.onload=()=>res(im);im.onerror=()=>res(null);im.src=o.src;});}}
+  for(const o of cmds){
+    if(o.k==='rect'){if(o.fill){g.fillStyle=o.fill;g.fillRect(o.x,o.y,o.w,o.h);}if(o.stroke){g.strokeStyle=o.stroke;g.lineWidth=o.sw;g.strokeRect(o.x,o.y,o.w,o.h);}}
+    else if(o.k==='line'){g.strokeStyle=o.stroke;g.lineWidth=o.sw;g.beginPath();g.moveTo(o.x1,o.y1);g.lineTo(o.x2,o.y2);g.stroke();}
+    else if(o.k==='poly'){g.fillStyle=o.fill;g.beginPath();o.pts.forEach((p,i)=>i?g.lineTo(p[0],p[1]):g.moveTo(p[0],p[1]));g.closePath();g.fill();}
+    else if(o.k==='img'){const im=imgs[o.src];if(im)g.drawImage(im,o.x,o.y,o.w,o.h);}
+    else if(o.k==='text'){g.font=`${o.bold?700:400} ${o.fs}px ${PDF_FONT}`;g.fillStyle=o.fill;g.textAlign=o.anchor==='middle'?'center':o.anchor==='end'?'right':'left';g.textBaseline='alphabetic';
+      if(o.ls){try{g.letterSpacing=o.ls+'px';}catch(_){}}g.fillText(o.t,o.x,o.y);if(o.ls){try{g.letterSpacing='0px';}catch(_){}}}
+  }
+  const blob=await new Promise(r=>c.toBlob(r,'image/jpeg',0.93));return {blob,w:c.width,h:c.height};
+}
+async function jpegsToPdf(imgs){ // imgs: [{blob,w,h}] → A4横 複数ページ（ライブラリ不要）
+  const PW=841.89,PH=595.28;const enc=new TextEncoder();const parts=[];const offs=[];let len=0;
+  const push=x=>{const u=typeof x==='string'?enc.encode(x):x;parts.push(u);len+=u.length;};
+  push('%PDF-1.4\n');
+  const obj=(n,body)=>{offs[n]=len;push(`${n} 0 obj\n`);if(typeof body==='string')push(body);else{push(body.head);push(body.data);push('\nendstream');}push('\nendobj\n');};
+  const n=imgs.length;const kids=[];for(let i=0;i<n;i++)kids.push(`${3+i*3} 0 R`);
+  obj(1,'<< /Type /Catalog /Pages 2 0 R >>');
+  obj(2,`<< /Type /Pages /Kids [${kids.join(' ')}] /Count ${n} >>`);
+  for(let i=0;i<n;i++){const p=3+i*3,c=p+1,im=p+2;const jpg=new Uint8Array(await imgs[i].blob.arrayBuffer());
+    obj(p,`<< /Type /Page /Parent 2 0 R /MediaBox [0 0 ${PW} ${PH}] /Resources << /XObject << /Im1 ${im} 0 R >> >> /Contents ${c} 0 R >>`);
+    const content=`q ${PW} 0 0 ${PH} 0 0 cm /Im1 Do Q`;
+    obj(c,{head:`<< /Length ${enc.encode(content).length} >>\nstream\n`,data:content});
+    obj(im,{head:`<< /Type /XObject /Subtype /Image /Width ${imgs[i].w} /Height ${imgs[i].h} /ColorSpace /DeviceRGB /BitsPerComponent 8 /Filter /DCTDecode /Length ${jpg.length} >>\nstream\n`,data:jpg});}
+  const total=3+n*3;const xref=len;push(`xref\n0 ${total}\n0000000000 65535 f \n`);for(let i=1;i<total;i++)push(String(offs[i]).padStart(10,'0')+' 00000 n \n');
+  push(`trailer\n<< /Size ${total} /Root 1 0 R >>\nstartxref\n${xref}\n%%EOF\n`);
+  return new Blob(parts,{type:'application/pdf'});
+}
+async function exportPdf(site){
+  if(!site||!site.name){toast('物件名を入力してください');return;}
+  try{
+    toast('工程表PDFを作成中…');
+    const pagesCmds=buildScheduleSvgPages(site);const imgs=[];for(const cm of pagesCmds)imgs.push(await cmdsToJpeg(cm,2));const pdf=await jpegsToPdf(imgs);
+    const fname=`工程表_${site.name.replace(/[\\/:*?"<>|]/g,'')}_${fmt(TODAY)}.pdf`;
+    {const u=URL.createObjectURL(pdf);const a=document.createElement('a');a.href=u;a.download=fname;document.body.appendChild(a);a.click();setTimeout(()=>{a.remove();URL.revokeObjectURL(u);},3000);toast('PDFをダウンロードしました');}
+  }catch(e){const m={declined:'保存をキャンセルしました',unavailable:'この画面ではファイル保存を使えません',not_granted:'この画面ではファイル保存を使えません',rate_limited:'少し待ってからもう一度お試しください'}[e&&e.code]||('PDFを作成できませんでした：'+(e&&e.message||e));toast(m);}
+}
+$('#pdfBtn').onclick=()=>{const s=collect();if(!s.tasks.length){toast('工程を1件以上入力してください');return;}exportPdf(s);};
+
+function ask(msg){return new Promise(res=>{let d=document.getElementById('askDlg');if(!d){d=document.createElement('div');d.id='askDlg';d.className='modal';d.innerHTML='<div class="dlg" style="max-width:360px;padding:18px"><p id="askMsg" style="white-space:pre-line;margin:0 0 16px;font-size:15px"></p><div style="display:flex;gap:8px;justify-content:flex-end"><button class="btn" id="askNo" type="button">やめる</button><button class="btn danger" id="askYes" type="button">削除する</button></div></div>';document.body.appendChild(d);d.querySelector('.dlg').style.cssText+=';margin:auto;height:auto;max-height:none;min-height:0;border-radius:12px;width:auto';d.style.alignItems='center';d.style.padding='16px';}
+  d.querySelector('#askMsg').textContent=msg;d.classList.add('open');d.style.zIndex=9999;const done=v=>{d.classList.remove('open');res(v);};d.querySelector('#askYes').onclick=()=>done(true);d.querySelector('#askNo').onclick=()=>done(false);});}
+let tt;function toast(m){const el=$('#toast');el.textContent=m;el.classList.add('show');clearTimeout(tt);tt=setTimeout(()=>el.classList.remove('show'),2200);}
+
+/* ---------- boot（Google Apps Script 版） ---------- */
+try{if(localStorage.getItem(LS+'-tv'))document.body.classList.add('tv');let v=localStorage.getItem(LS+'-view');if(!v&&window.innerWidth<700)v='cards';if(v){const b=document.querySelector(`.tabs button[data-view="${v}"]`);if(b)b.click();}}catch(_){}
+render();renderInbox([]);
+function readerOff(msg){$('#readerHint').textContent=msg;}
+// google.script.run を Promise 化
+const API_URL='https://script.google.com/macros/s/AKfycbzYE2dOHXFTxvWFUB674dpPQ1eFGlJnuyouDJJVyFG0tkTjEQ-AblBHuRZEY_66mVe1/exec';
+const HAS_GAS=!!(window.google&&google.script&&google.script.run);
+const gs=(fn,...args)=>{
+  if(HAS_GAS)return new Promise((res,rej)=>{google.script.run.withSuccessHandler(res).withFailureHandler(e=>rej(new Error(e&&e.message||String(e))))[fn](...args);});
+  let key='';try{key=localStorage.getItem(LS+'-key')||'';}catch(_){}
+  if(!key){key=(window.prompt('アクセスキー（合言葉）を入力してください')||'').trim();if(key){try{localStorage.setItem(LS+'-key',key);}catch(_){}}}
+  return fetch(API_URL,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify({fn,args,key}),redirect:'follow',credentials:'omit'})
+    .then(r=>r.json()).then(j=>{if(!j||!j.ok){if(j&&j.error==='unauthorized'){try{localStorage.removeItem(LS+'-key');}catch(_){}}throw new Error((j&&j.error)||'api-error');}return j.result;});
+};
+// 旧 db 互換の薄いアダプタ（使っている呼び出しだけ）
+function makeGasDb(){
+  const listeners={sites:[],inbox:[]};
+  const snap=arr=>({docs:arr.map(o=>({id:o.id,exists:true,data:()=>o})),size:arr.length,empty:!arr.length});
+  let lastHash='',pending=0,gen=0;
+  async function refresh(force){
+    try{const g=gen;const r=await gs('apiGetAll');
+      if(!force&&(pending>0||g!==gen))return; // 書き込み中・直後の古い結果は捨てる（画面の巻き戻り防止）
+      const h=JSON.stringify([r.sites.map(x=>x.updatedAt+x.id),r.inbox.map(x=>x.id+x.status)]);
+      if(h!==lastHash||force){lastHash=h;listeners.sites.forEach(cb=>cb(snap(r.sites)));listeners.inbox.forEach(cb=>cb(snap(r.inbox)));}
+      $('#sync').classList.add('on');$('#syncText').textContent=`共有中 ・ ${new Date().toLocaleTimeString('ja-JP',{hour:'2-digit',minute:'2-digit'})} 更新`;
+    }catch(e){$('#sync').classList.remove('on');$('#syncText').textContent='接続できません（再読み込みしてください）';}
+  }
+  setInterval(refresh,15000);document.addEventListener('visibilitychange',()=>{if(!document.hidden)refresh();});
+  const q={onSnapshot(cb){listeners.inbox.push(cb);refresh();return()=>{};},orderBy(){return q;},limit(){return q;},where(){return q;}};
+  return {
+    _refresh:refresh,
+    collection(name){
+      if(name==='sites')return {onSnapshot(cb){listeners.sites.push(cb);refresh();return()=>{};}};
+      if(name==='inbox')return {...q,async add(obj){const id=await gs('apiAddInbox',obj);lastHash='';refresh();return {id};}};
+      return {onSnapshot(){return()=>{};},orderBy(){return this;},limit(){return this;}};
+    },
+    doc(path){const [col,id]=path.split('/');
+      return {
+        async set(obj){pending++;try{await gs('apiSetSite',id,obj);}finally{pending--;gen++;}lastHash='';refresh();},
+        async update(patch){pending++;try{await gs(col==='inbox'?'apiUpdateInbox':'apiUpdateSite',id,patch);}finally{pending--;gen++;}lastHash='';refresh();},
+        async delete(){pending++;try{await gs(col==='inbox'?'apiDeleteInbox':'apiDeleteSite',id);}finally{pending--;gen++;}lastHash='';refresh();},
+        async get(){const r=await gs('apiGetAll');const o=(col==='inbox'?r.inbox:r.sites).find(x=>x.id===id);return {exists:!!o,data:()=>o};}
+      };}
+  };
+}
+(async()=>{
+  readerOff('PDFはこのまま読み取れます。写真は受付箱に入り、AIが順次読み取って登録します。');
+  if(!HAS_GAS&&!API_URL){
+    localLoad();render();$('#syncText').textContent='この端末のみ（共有オフ）';
+    $('#notice').textContent='共有サーバーに接続できないため、この端末内だけに保存しています。';$('#notice').classList.add('show');return;
+  }
+  db=makeGasDb();
+  db.collection('inbox').orderBy('createdAt','desc').limit(60).onSnapshot(snap=>{
+    const docs=snap.docs.map(x=>x.data()).sort((a,b)=>(b.createdAt||'').localeCompare(a.createdAt||''));
+    const pending=docs.filter(d=>d.status==='pending').length;
+    const bd=$('#inboxBadge');bd.textContent=pending;bd.hidden=!pending;
+    const el=$('#notice');if(pending){el.textContent=`📥 受付箱に未処理の写真・メモが ${pending} 件あります。AIが順次読み取って現場に登録します（「受付箱」タブで確認できます）。`;el.classList.add('show');}else if(el.textContent.startsWith('📥')){el.classList.remove('show');}
+    renderInbox(docs);
+  });
+  db.collection('sites').onSnapshot(snap=>{sites=snap.docs.map(x=>x.data());render();});
+})();
+})();
+</script>
+
+</body>
+</html>
