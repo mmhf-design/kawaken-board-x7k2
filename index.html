@@ -876,8 +876,24 @@ $('#readBtn').onclick=async()=>{
       if(!used){merged.tasks.push(...r.tasks);if(r.tasks.length)got=true;}
       if(!used&&!r.tasks.length&&r.images.length)imgs.push(...r.images); // 文字の無いスキャンPDF→写真扱い
     }
-    // 2) 写真・文字：AIが使えるときだけ
-    if(imgs.length||text){
+    // 2) 写真：サーバーAIの精密読み取り（PDFと同じ経路・高解像度）。使えないときだけ従来どおり受付箱へ
+    let photoDone=false;
+    if(imgs.length&&!text&&db&&await aiServerReady()){
+      try{
+        const pages=[];
+        for(const f of imgs.slice(0,3)){$('#readStatus').textContent='写真を高解像度で準備中… '+f.name;const d=await shrinkImage(f,2400,0.9);if(d)pages.push({image:d,text:''});}
+        if(pages.length){
+          const ai=await aiReadPages(pages,{tasks:[],info:{},columns:[]},m=>{$('#readStatus').textContent=m;});
+          if(ai&&Array.isArray(ai.tasks)&&ai.tasks.length){
+            ['name','customer','contractor','address','work','manager','start','end','note'].forEach(k=>{if(ai[k]&&!merged[k])merged[k]=String(ai[k]);});
+            merged.tasks.push(...ai.tasks);got=true;photoDone=true;merged._ai=true;
+            if(ai.warning)toast('AIの注記：'+String(ai.warning).slice(0,120));
+          }
+        }
+      }catch(e){toast('写真のAI精密読み取りができませんでした（受付箱に送ります）：'+(e&&e.message||e).slice(0,80));}
+    }
+    // 2') 写真・文字：上で処理できなかったとき
+    if((imgs.length||text)&&!photoDone){
       if(!sampleFn||(imgs.length&&!sampleCaps?.images)){
         // この端末ではAIに直接渡せない → 共有の「受付箱」に入れて、担当AI（Claude）が後で読み取って登録する
         if(db){const n=await sendToInbox(imgs,text);
